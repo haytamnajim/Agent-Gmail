@@ -1,0 +1,13 @@
+target/
+tokens/
+credentials.json
+PROJECT_CONTEXT.md
+creden.json
+client_secret*.json
+*.log
+.env
+.env.*
+*.key
+*.pem
+*.p12
+*.jks

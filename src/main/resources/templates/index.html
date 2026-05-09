@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agent Gmail</title>
+    <style>
+        :root {
+            color-scheme: light;
+            --bg: #f6f7f9;
+            --panel: #ffffff;
+            --text: #172033;
+            --muted: #697386;
+            --border: #d9dee8;
+            --accent: #1769e0;
+            --accent-dark: #0f55bd;
+            --danger: #b42318;
+            --danger-dark: #8f1d14;
+            --success: #127a43;
+            --error: #c12a2a;
+            --shadow: 0 16px 40px rgba(23, 32, 51, 0.08);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background: var(--bg);
+            color: var(--text);
+            font-family: Arial, Helvetica, sans-serif;
+            line-height: 1.5;
+        }
+
+        main {
+            width: min(1280px, calc(100% - 32px));
+            margin: 0 auto;
+            padding: 40px 0;
+        }
+
+        header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 32px;
+            font-weight: 700;
+            letter-spacing: 0;
+        }
+
+        .status {
+            min-width: 148px;
+            padding: 8px 12px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: var(--panel);
+            color: var(--muted);
+            text-align: center;
+            font-weight: 700;
+        }
+
+        .status.running {
+            color: var(--accent);
+            border-color: rgba(23, 105, 224, 0.35);
+        }
+
+        .status.done {
+            color: var(--success);
+            border-color: rgba(18, 122, 67, 0.35);
+        }
+
+        .status.error {
+            color: var(--error);
+            border-color: rgba(193, 42, 42, 0.35);
+        }
+
+        .actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        button {
+            min-height: 44px;
+            min-width: 120px;
+            border: 0;
+            border-radius: 8px;
+            background: var(--accent);
+            color: #ffffff;
+            padding: 0 18px;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: var(--accent-dark);
+        }
+
+        button:disabled {
+            cursor: not-allowed;
+            opacity: 0.65;
+        }
+
+        .stop-button {
+            background: var(--danger);
+        }
+
+        .stop-button:hover {
+            background: var(--danger-dark);
+        }
+
+        .layout {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(280px, 360px);
+            align-items: stretch;
+            gap: 20px;
+        }
+
+        .panel,
+        .card {
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: var(--panel);
+            box-shadow: var(--shadow);
+        }
+
+        .panel {
+            display: flex;
+            flex-direction: column;
+            min-height: 100%;
+            overflow: hidden;
+        }
+
+        .panel h2,
+        .card h2 {
+            margin: 0;
+            padding: 16px 18px;
+            border-bottom: 1px solid var(--border);
+            font-size: 18px;
+        }
+
+        .log {
+            flex: 1;
+            min-height: 240px;
+            max-height: 680px;
+            overflow: auto;
+            padding: 12px;
+        }
+
+        .step {
+            display: grid;
+            grid-template-columns: 48px minmax(0, 1fr);
+            gap: 10px;
+            padding: 11px 10px;
+            border-bottom: 1px solid #edf0f5;
+        }
+
+        .step:last-child {
+            border-bottom: 0;
+        }
+
+        .step.error {
+            color: var(--error);
+            background: #fff4f4;
+        }
+
+        .badge {
+            font-size: 12px;
+            line-height: 1.4;
+            text-align: center;
+            font-weight: 700;
+            color: var(--muted);
+        }
+
+        .message {
+            margin: 0;
+            font-weight: 700;
+            overflow-wrap: anywhere;
+        }
+
+        .time {
+            display: block;
+            margin-top: 3px;
+            color: var(--muted);
+            font-size: 12px;
+            font-weight: 400;
+        }
+
+        .cards {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+
+        .content {
+            min-height: 260px;
+            max-height: 360px;
+            overflow: auto;
+            padding: 16px 18px;
+            color: #2b3447;
+            white-space: pre-wrap;
+            overflow-wrap: anywhere;
+        }
+
+        .placeholder {
+            color: var(--muted);
+        }
+
+        @media (max-width: 900px) {
+            header,
+            .layout {
+                grid-template-columns: 1fr;
+            }
+
+            .log {
+                min-height: 220px;
+                max-height: 320px;
+            }
+
+            header {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .status {
+                width: 100%;
+            }
+
+            .actions {
+                width: 100%;
+            }
+
+            button {
+                flex: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+<main>
+    <header>
+        <h1>Agent Gmail</h1>
+        <div id="status" class="status">Arrete</div>
+    </header>
+
+    <div class="actions">
+        <button id="startButton" type="button">Demarrer</button>
+        <button id="stopButton" class="stop-button" type="button">Arreter</button>
+    </div>
+
+    <section class="layout">
+        <div class="cards">
+            <article class="card">
+                <h2>Email recu</h2>
+                <div id="emailContent" class="content placeholder">En attente d'un email principal...</div>
+            </article>
+
+            <article class="card">
+                <h2>Reponse envoyee</h2>
+                <div id="replyContent" class="content placeholder">La reponse generee apparaitra ici.</div>
+            </article>
+        </div>
+
+        <div class="panel">
+            <h2>Communication de l'agent</h2>
+            <div id="log" class="log" aria-live="polite"></div>
+        </div>
+    </section>
+</main>
+
+<script>
+    const startButton = document.getElementById('startButton');
+    const stopButton = document.getElementById('stopButton');
+    const log = document.getElementById('log');
+    const statusLabel = document.getElementById('status');
+    const emailContent = document.getElementById('emailContent');
+    const replyContent = document.getElementById('replyContent');
+
+    startButton.addEventListener('click', () => command('/agent/start'));
+    stopButton.addEventListener('click', () => command('/agent/stop'));
+
+    loadStatus();
+    connectEvents();
+
+    async function command(url) {
+        startButton.disabled = true;
+        stopButton.disabled = true;
+
+        try {
+            const response = await fetch(url, { method: 'POST' });
+            applyStatus(await response.json());
+        } catch (error) {
+            appendStep({
+                emoji: 'ERR',
+                message: 'Commande impossible: ' + error.message,
+                timestamp: new Date().toISOString(),
+                type: 'error'
+            });
+            setStatus('Erreur', 'error');
+        } finally {
+            await loadStatus();
+        }
+    }
+
+    async function loadStatus() {
+        try {
+            const response = await fetch('/agent/status');
+            applyStatus(await response.json());
+        } catch (error) {
+            setStatus('Indisponible', 'error');
+            startButton.disabled = false;
+            stopButton.disabled = true;
+        }
+    }
+
+    function applyStatus(status) {
+        if (status.active) {
+            setStatus(status.running ? 'En traitement' : 'Actif', 'running');
+            startButton.disabled = true;
+            stopButton.disabled = false;
+        } else {
+            setStatus('Arrete', 'done');
+            startButton.disabled = false;
+            stopButton.disabled = true;
+        }
+    }
+
+    function connectEvents() {
+        const source = new EventSource('/events');
+
+        source.addEventListener('step', (event) => {
+            const step = JSON.parse(event.data);
+            appendStep(step);
+
+            if (step.emailContent) {
+                setContent(emailContent, step.emailContent, false);
+            }
+
+            if (step.generatedReply) {
+                setContent(replyContent, step.generatedReply, false);
+            }
+
+            if (step.type === 'error') {
+                setStatus('Erreur', 'error');
+            }
+
+            loadStatus();
+        });
+
+        source.onerror = () => {
+            appendStep({
+                emoji: 'ERR',
+                message: 'Flux agent interrompu. Reconnexion en cours...',
+                timestamp: new Date().toISOString(),
+                type: 'error'
+            });
+        };
+    }
+
+    function appendStep(step) {
+        const row = document.createElement('div');
+        row.className = `step ${step.type === 'error' ? 'error' : ''}`;
+
+        const badge = document.createElement('div');
+        badge.className = 'badge';
+        badge.textContent = step.emoji;
+
+        const body = document.createElement('div');
+        const message = document.createElement('p');
+        message.className = 'message';
+        message.textContent = step.message;
+
+        const time = document.createElement('span');
+        time.className = 'time';
+        time.textContent = formatTime(step.timestamp);
+
+        body.appendChild(message);
+        body.appendChild(time);
+        row.appendChild(badge);
+        row.appendChild(body);
+        log.appendChild(row);
+        log.scrollTop = log.scrollHeight;
+    }
+
+    function setContent(element, value, placeholder) {
+        element.textContent = value;
+        element.classList.toggle('placeholder', placeholder);
+    }
+
+    function setStatus(text, className) {
+        statusLabel.textContent = text;
+        statusLabel.className = `status ${className}`;
+    }
+
+    function formatTime(timestamp) {
+        return new Intl.DateTimeFormat('fr-FR', {
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit'
+        }).format(new Date(timestamp));
+    }
+</script>
+</body>
+</html>
