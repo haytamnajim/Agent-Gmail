@@ -3,22 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Agent Gmail</title>
+    <title>Agent Gmail - Espace de Travail</title>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
+        
         :root {
             color-scheme: light;
-            --bg: #f6f7f9;
-            --panel: #ffffff;
-            --text: #172033;
-            --muted: #697386;
-            --border: #d9dee8;
-            --accent: #1769e0;
-            --accent-dark: #0f55bd;
-            --danger: #b42318;
-            --danger-dark: #8f1d14;
-            --success: #127a43;
-            --error: #c12a2a;
-            --shadow: 0 16px 40px rgba(23, 32, 51, 0.08);
+            --bg-app: #f6f8fc;
+            --primary: #1a73e8;
+            --primary-light: #e8f0fe;
+            --primary-dark: #1557b0;
+            --surface: #ffffff;
+            --text-main: #1f1f1f;
+            --text-sub: #5f6368;
+            --border: #e0e3e9;
+            --danger: #d93025;
+            --danger-light: #fce8e6;
+            --danger-dark: #b00020;
+            --success: #188038;
+            --success-light: #e6f4ea;
+            --inbox-active: #c2e7ff;
+            --inbox-active-text: #001d35;
+            --shadow-subtle: 0 1px 3px rgba(60,64,67,0.12), 0 1px 2px rgba(60,64,67,0.24);
+            --shadow-card: 0 4px 18px rgba(0, 0, 0, 0.03);
+            --shadow-panel: 0 10px 30px rgba(26, 73, 144, 0.04);
+            --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            --radius-sm: 8px;
+            --radius-md: 16px;
+            --radius-lg: 24px;
         }
 
         * {
@@ -28,101 +40,411 @@
         body {
             margin: 0;
             min-height: 100vh;
-            background: var(--bg);
-            color: var(--text);
-            font-family: Arial, Helvetica, sans-serif;
+            background: var(--bg-app);
+            color: var(--text-main);
+            font-family: 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             line-height: 1.5;
+            overflow-x: hidden;
         }
 
-        main {
-            width: min(1280px, calc(100% - 32px));
-            margin: 0 auto;
-            padding: 40px 0;
+        /* App Layout Container */
+        .app-container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
         }
 
-        header {
+        /* Top Header Bar */
+        .app-header {
             display: flex;
             align-items: center;
             justify-content: space-between;
+            height: 64px;
+            padding: 0 24px;
+            background: var(--bg-app);
+            border-bottom: 1px solid var(--border);
             gap: 16px;
+            z-index: 100;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            min-width: 240px;
+        }
+
+        .menu-toggle-btn {
+            background: transparent;
+            border: 0;
+            color: var(--text-sub);
+            padding: 8px;
+            cursor: pointer;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+
+        .menu-toggle-btn:hover {
+            background: #edf0f5;
+            color: var(--text-main);
+        }
+
+        .app-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            user-select: none;
+        }
+
+        .gmail-logo {
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.06));
+        }
+
+        .logo-text {
+            font-size: 20px;
+            font-weight: 600;
+            color: #444746;
+            letter-spacing: -0.5px;
+        }
+
+        .logo-accent {
+            color: var(--primary);
+            font-weight: 700;
+        }
+
+        .header-center {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            max-width: 720px;
+        }
+
+        .search-bar-wrapper {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            background: #eaf1fb;
+            border-radius: 28px;
+            padding: 0 20px;
+            height: 48px;
+            transition: var(--transition);
+            border: 1px solid transparent;
+        }
+
+        .search-bar-wrapper:focus-within {
+            background: var(--surface);
+            box-shadow: 0 1px 3px 0 rgba(60,64,67,0.3), 0 4px 8px 3px rgba(60,64,67,0.15);
+            border-color: transparent;
+        }
+
+        .search-icon {
+            color: var(--text-sub);
+            margin-right: 12px;
+        }
+
+        .search-input {
+            width: 100%;
+            border: 0;
+            background: transparent;
+            font-family: inherit;
+            font-size: 15px;
+            color: var(--text-main);
+            outline: none;
+            font-weight: 500;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            min-width: 240px;
+            justify-content: flex-end;
+        }
+
+        /* Status Ring Badge */
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 16px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.03);
+            font-weight: 600;
+            font-size: 13px;
+            color: var(--text-sub);
+            transition: var(--transition);
+        }
+
+        .status-pulse {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #9aa0a6;
+            display: inline-block;
+        }
+
+        .status-indicator.running {
+            background: var(--primary-light);
+            border-color: rgba(26,115,232,0.2);
+            color: var(--primary-dark);
+        }
+
+        .status-indicator.running .status-pulse {
+            background: var(--primary);
+            animation: pulse-glow 1.5s infinite;
+        }
+
+        .status-indicator.done {
+            background: var(--success-light);
+            border-color: rgba(24,128,56,0.2);
+            color: var(--success);
+        }
+
+        .status-indicator.done .status-pulse {
+            background: var(--success);
+        }
+
+        .status-indicator.error {
+            background: var(--danger-light);
+            border-color: rgba(217,48,37,0.2);
+            color: var(--danger);
+        }
+
+        .status-indicator.error .status-pulse {
+            background: var(--danger);
+            animation: pulse-glow-red 1s infinite;
+        }
+
+        @keyframes pulse-glow {
+            0% { transform: scale(0.9); box-shadow: 0 0 0 0 rgba(26,115,232,0.7); }
+            70% { transform: scale(1.1); box-shadow: 0 0 0 6px rgba(26,115,232,0); }
+            100% { transform: scale(0.9); box-shadow: 0 0 0 0 rgba(26,115,232,0); }
+        }
+
+        @keyframes pulse-glow-red {
+            0% { transform: scale(0.9); box-shadow: 0 0 0 0 rgba(217,48,37,0.7); }
+            70% { transform: scale(1.1); box-shadow: 0 0 0 6px rgba(217,48,37,0); }
+            100% { transform: scale(0.9); box-shadow: 0 0 0 0 rgba(217,48,37,0); }
+        }
+
+        .user-profile {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #e28743;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 14px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        /* App Body Structure */
+        .app-body {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+            background: var(--bg-app);
+        }
+
+        /* Sidebar Navigation */
+        .app-sidebar {
+            width: var(--sidebar-width);
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            padding: 16px 12px;
+            background: var(--bg-app);
+            border-right: 1px solid transparent;
+        }
+
+        /* Action Buttons Grid in Sidebar */
+        .sidebar-actions {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
             margin-bottom: 24px;
         }
 
-        h1 {
-            margin: 0;
-            font-size: 32px;
-            font-weight: 700;
-            letter-spacing: 0;
+        .btn-action {
+            height: 48px;
+            border: 0;
+            border-radius: 16px;
+            padding: 0 20px;
+            font-family: inherit;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            box-shadow: var(--shadow-subtle);
+            transition: var(--transition);
         }
 
-        .status {
-            min-width: 148px;
-            padding: 8px 12px;
+        .start-btn {
+            background: var(--inbox-active);
+            color: var(--inbox-active-text);
+        }
+
+        .start-btn:hover:not(:disabled) {
+            box-shadow: 0 1px 3px 0 rgba(60,64,67,0.3), 0 4px 8px 3px rgba(60,64,67,0.15);
+            background: #b5e1ff;
+        }
+
+        .stop-btn {
+            background: var(--surface);
+            color: var(--danger);
             border: 1px solid var(--border);
-            border-radius: 8px;
-            background: var(--panel);
-            color: var(--muted);
-            text-align: center;
+        }
+
+        .stop-btn:hover:not(:disabled) {
+            background: var(--danger-light);
+            border-color: rgba(217,48,37,0.25);
+        }
+
+        .btn-action:disabled {
+            cursor: not-allowed;
+            opacity: 0.5;
+            box-shadow: none;
+        }
+
+        /* Sidebar Menus */
+        .sidebar-nav {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            flex: 1;
+        }
+
+        .nav-item {
+            height: 32px;
+            display: flex;
+            align-items: center;
+            padding: 0 20px 0 12px;
+            border-radius: 16px;
+            color: var(--text-sub);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            gap: 12px;
+            transition: var(--transition);
+        }
+
+        .nav-item:hover {
+            background: rgba(60,64,67,0.06);
+            color: var(--text-main);
+        }
+
+        .nav-item.active {
+            background: var(--primary-light);
+            color: var(--primary-dark);
+            font-weight: 600;
+        }
+
+        .nav-icon {
+            flex-shrink: 0;
+        }
+
+        .nav-label {
+            flex: 1;
+        }
+
+        .nav-badge {
+            font-size: 11px;
             font-weight: 700;
+            padding: 1px 8px;
+            background: rgba(26,115,232,0.15);
+            border-radius: 10px;
+            color: var(--primary-dark);
         }
 
-        .status.running {
-            color: var(--accent);
-            border-color: rgba(23, 105, 224, 0.35);
+        .sidebar-footer {
+            margin-top: auto;
+            padding-top: 16px;
         }
 
-        .status.done {
-            color: var(--success);
-            border-color: rgba(18, 122, 67, 0.35);
-        }
-
-        .status.error {
-            color: var(--error);
-            border-color: rgba(193, 42, 42, 0.35);
-        }
-
-        .actions {
+        .agent-card {
             display: flex;
             align-items: center;
             gap: 12px;
-            margin-bottom: 20px;
+            padding: 12px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-card);
         }
 
-        button {
-            min-height: 44px;
-            min-width: 120px;
-            border: 0;
-            border-radius: 8px;
-            background: var(--accent);
-            color: #ffffff;
-            padding: 0 18px;
-            font-size: 15px;
-            font-weight: 700;
-            cursor: pointer;
+        .agent-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--primary-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
         }
 
-        button:hover {
-            background: var(--accent-dark);
+        .agent-details {
+            display: flex;
+            flex-direction: column;
         }
 
-        button:disabled {
-            cursor: not-allowed;
-            opacity: 0.65;
+        .agent-name {
+            font-weight: 600;
+            font-size: 13px;
+            color: var(--text-main);
         }
 
-        .stop-button {
-            background: var(--danger);
+        .agent-desc {
+            font-size: 11px;
+            color: var(--text-sub);
         }
 
-        .stop-button:hover {
-            background: var(--danger-dark);
+        /* Workspace main area */
+        .app-main {
+            flex: 1;
+            padding: 0 16px 16px 0;
+            overflow: hidden;
+            display: flex;
         }
 
-        .layout {
+        /* Workspace Grid (Three Panes) */
+        .workspace-grid {
+            width: 100%;
             display: grid;
-            grid-template-columns: 320px minmax(0, 1fr) minmax(280px, 340px);
+            grid-template-columns: 340px 1fr 300px;
+            gap: 16px;
             align-items: stretch;
-            gap: 20px;
+        }
+
+        /* Panels Shared CSS */
+        .panel {
+            background: var(--surface);
+            border-radius: var(--radius-lg);
+            border: 1px solid transparent;
+            box-shadow: var(--shadow-panel);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .panel h2 {
+            margin: 0;
+            font-size: 16px;
+            font-weight: 600;
+            color: #444746;
+            padding: 16px 20px;
+            user-select: none;
         }
 
         .panel-header-with-actions {
@@ -130,66 +452,69 @@
             align-items: center;
             justify-content: space-between;
             border-bottom: 1px solid var(--border);
+            height: 52px;
             padding-right: 12px;
         }
 
         .panel-header-with-actions h2 {
-            border-bottom: 0 !important;
+            border-bottom: 0;
+            padding: 0 20px;
         }
 
-        .refresh-button {
+        /* Left Inbox Column */
+        .inbox-panel {
+            min-height: 100%;
+        }
+
+        .refresh-button,
+        .clear-log-btn {
             background: transparent;
             border: 0;
-            color: var(--muted);
-            min-width: unset;
-            min-height: unset;
+            color: var(--text-sub);
             padding: 8px;
             cursor: pointer;
-            border-radius: 6px;
+            border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.2s ease;
+            transition: var(--transition);
         }
 
-        .refresh-button:hover {
-            background: #edf0f5;
-            color: var(--accent);
-        }
-
-        .refresh-button:active svg {
-            transform: rotate(180deg);
+        .refresh-button:hover,
+        .clear-log-btn:hover {
+            background: rgba(60,64,67,0.06);
+            color: var(--primary);
         }
 
         .refresh-button svg {
-            transition: transform 0.3s ease;
+            transition: transform 0.6s ease;
         }
 
         .inbox-list {
             flex: 1;
             overflow-y: auto;
-            max-height: 680px;
-            background: #fbfbfc;
+            background: var(--surface);
         }
 
         .inbox-placeholder {
-            padding: 24px;
+            padding: 32px 24px;
             text-align: center;
-            color: var(--muted);
-            font-size: 14px;
+            color: var(--text-sub);
+            font-size: 13px;
             font-style: italic;
         }
 
         .inbox-item {
-            padding: 14px 16px;
-            border-bottom: 1px solid #edf0f5;
+            padding: 14px 18px;
+            border-bottom: 1px solid #f2f3f5;
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: var(--transition);
             position: relative;
             display: flex;
             flex-direction: column;
             gap: 4px;
             text-align: left;
+            user-select: none;
         }
 
         .inbox-item:last-child {
@@ -197,13 +522,13 @@
         }
 
         .inbox-item:hover {
-            background: #f1f4f9;
+            background: #f7f9fc;
+            box-shadow: inset 2px 0 0 var(--primary);
         }
 
         .inbox-item.active {
-            background: #e8f0fe;
-            border-left: 4px solid var(--accent);
-            padding-left: 12px;
+            background: #e2f0fd;
+            box-shadow: inset 4px 0 0 var(--primary);
         }
 
         .inbox-item-header {
@@ -215,8 +540,8 @@
 
         .inbox-item-sender {
             font-weight: 700;
-            font-size: 14px;
-            color: var(--text);
+            font-size: 13.5px;
+            color: var(--text-main);
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -225,22 +550,23 @@
 
         .inbox-item-time {
             font-size: 11px;
-            color: var(--muted);
+            color: var(--text-sub);
+            font-weight: 500;
             white-space: nowrap;
         }
 
         .inbox-item-subject {
             font-weight: 600;
-            font-size: 13px;
-            color: #2b3447;
+            font-size: 12.5px;
+            color: #3c4043;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
         }
 
         .inbox-item-snippet {
-            font-size: 12px;
-            color: var(--muted);
+            font-size: 11.5px;
+            color: var(--text-sub);
             display: -webkit-box;
             -webkit-line-clamp: 2;
             -webkit-box-orient: vertical;
@@ -250,196 +576,518 @@
         }
 
         .inbox-item.demo-badge::after {
-            content: "Demo";
+            content: "Démo";
             position: absolute;
-            right: 16px;
+            right: 18px;
             bottom: 8px;
             font-size: 9px;
-            background: rgba(23, 105, 224, 0.1);
-            color: var(--accent);
-            padding: 1px 5px;
+            background: rgba(26, 115, 232, 0.1);
+            color: var(--primary-dark);
+            padding: 1px 6px;
             border-radius: 4px;
             font-weight: 700;
+            letter-spacing: 0.5px;
         }
 
-        .panel,
-        .card {
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            background: var(--panel);
-            box-shadow: var(--shadow);
-        }
-
-        .panel {
+        /* Center Email Detail Pane */
+        .email-viewer-panel {
+            background: var(--surface);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-panel);
             display: flex;
             flex-direction: column;
+            overflow: hidden;
             min-height: 100%;
+        }
+
+        .viewer-placeholder {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+            text-align: center;
+            color: var(--text-sub);
+            user-select: none;
+        }
+
+        .placeholder-art {
+            color: rgba(26, 115, 232, 0.25);
+            margin-bottom: 20px;
+            animation: float 4s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+
+        .viewer-placeholder h3 {
+            margin: 0 0 8px 0;
+            color: #444746;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .viewer-placeholder p {
+            margin: 0;
+            max-width: 320px;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .viewer-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
             overflow: hidden;
         }
 
-        .panel h2,
-        .card h2 {
-            margin: 0;
-            padding: 16px 18px;
+        .viewer-header {
+            padding: 20px 24px;
             border-bottom: 1px solid var(--border);
-            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        .viewer-header h2 {
+            margin: 0 0 16px 0;
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--text-main);
+        }
+
+        .viewer-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .sender-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .sender-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #e3edfa;
+            color: var(--primary-dark);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 16px;
+        }
+
+        .sender-text {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sender-name {
+            font-weight: 600;
+            font-size: 14px;
+            color: var(--text-main);
+        }
+
+        .sender-email {
+            font-size: 12px;
+            color: var(--text-sub);
+        }
+
+        .email-date {
+            font-size: 12px;
+            color: var(--text-sub);
+            font-weight: 500;
+        }
+
+        .conversation-thread {
+            flex: 1;
+            overflow-y: auto;
+            padding: 24px;
+            background: #f8fafe;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .thread-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 20px;
+            position: relative;
+            box-shadow: var(--shadow-card);
+            transition: var(--transition);
+        }
+
+        .thread-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.04);
+        }
+
+        .card-tag {
+            position: absolute;
+            top: -10px;
+            left: 16px;
+            font-size: 10px;
+            font-weight: 700;
+            background: #eaeef6;
+            color: var(--text-sub);
+            padding: 2px 10px;
+            border-radius: 20px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border: 1px solid var(--border);
+        }
+
+        .card-tag.ai-tag {
+            background: var(--primary-light);
+            color: var(--primary-dark);
+            border-color: rgba(26,115,232,0.25);
+            display: flex;
+            align-items: center;
+        }
+
+        .email-body {
+            font-size: 13.5px;
+            color: #3c4043;
+            white-space: pre-wrap;
+            overflow-wrap: anywhere;
+            line-height: 1.6;
+        }
+
+        .reply-body {
+            font-weight: 500;
+            color: #1f1f1f;
+        }
+
+        .email-body.placeholder {
+            color: var(--text-sub);
+            font-style: italic;
+        }
+
+        .ai-reply {
+            border: 1px solid rgba(26, 115, 232, 0.25);
+            background: linear-gradient(180deg, #ffffff 0%, #f4f8fe 100%);
+            box-shadow: 0 4px 15px rgba(26, 115, 232, 0.04);
+        }
+
+        /* Right SSE Logs Column */
+        .log-panel {
+            min-height: 100%;
+            background: #111b27;
+            border: 1px solid #1a2c42;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25);
+        }
+
+        .log-panel h2 {
+            color: #d1d5db;
+            padding: 16px 20px;
+        }
+
+        .log-panel .panel-header-with-actions {
+            border-bottom: 1px solid #1c2e45;
+        }
+
+        .clear-log-btn {
+            color: #9ca3af;
+        }
+
+        .clear-log-btn:hover {
+            color: #ffffff;
+            background: rgba(255, 255, 255, 0.08);
         }
 
         .log {
             flex: 1;
-            min-height: 240px;
-            max-height: 680px;
-            overflow: auto;
             padding: 12px;
+            overflow-y: auto;
+            font-family: Consolas, "Courier New", monospace;
+            font-size: 11.5px;
+            color: #e5e7eb;
         }
 
         .step {
-            display: grid;
-            grid-template-columns: 48px minmax(0, 1fr);
-            gap: 10px;
-            padding: 11px 10px;
-            border-bottom: 1px solid #edf0f5;
+            display: flex;
+            gap: 12px;
+            padding: 8px 10px;
+            border-bottom: 1px solid #192738;
+            transition: var(--transition);
         }
 
-        .step:last-child {
-            border-bottom: 0;
+        .step:hover {
+            background: rgba(255, 255, 255, 0.03);
         }
 
         .step.error {
-            color: var(--error);
-            background: #fff4f4;
+            color: #fca5a5;
+            background: rgba(220, 38, 38, 0.15);
+            border-bottom-color: rgba(220, 38, 38, 0.25);
         }
 
-        .badge {
-            font-size: 12px;
-            line-height: 1.4;
-            text-align: center;
+        .step-badge {
+            font-size: 11px;
             font-weight: 700;
-            color: var(--muted);
+            padding: 2px 6px;
+            background: #253346;
+            border-radius: 4px;
+            color: #9ca3af;
+            height: fit-content;
+            align-self: flex-start;
+            text-transform: uppercase;
         }
 
-        .message {
+        .step.error .step-badge {
+            background: #b91c1c;
+            color: #ffffff;
+        }
+
+        .step-body {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .step-message {
             margin: 0;
-            font-weight: 700;
+            font-weight: 600;
             overflow-wrap: anywhere;
+            line-height: 1.4;
         }
 
-        .time {
-            display: block;
-            margin-top: 3px;
-            color: var(--muted);
-            font-size: 12px;
-            font-weight: 400;
+        .step-time {
+            color: #6b7280;
+            font-size: 10px;
         }
 
-        .cards {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 20px;
-        }
-
-        .content {
-            min-height: 260px;
-            max-height: 360px;
-            overflow: auto;
-            padding: 16px 18px;
-            color: #2b3447;
-            white-space: pre-wrap;
-            overflow-wrap: anywhere;
-        }
-
-        .placeholder {
-            color: var(--muted);
+        /* Responsive Breakpoints */
+        @media (max-width: 1280px) {
+            .workspace-grid {
+                grid-template-columns: 300px 1fr;
+            }
+            .log-panel {
+                grid-column: span 2;
+                height: 280px !important;
+                min-height: 280px !important;
+            }
         }
 
         @media (max-width: 1024px) {
-            header,
-            .layout {
-                grid-template-columns: 1fr;
+            .app-container {
+                height: auto;
             }
-
-            .log,
-            .inbox-list {
-                min-height: 220px;
-                max-height: 320px;
-            }
-
-            header {
-                align-items: flex-start;
+            .app-body {
                 flex-direction: column;
+                overflow: visible;
             }
-
-            .status {
+            .app-sidebar {
                 width: 100%;
+                border-right: 0;
+                border-bottom: 1px solid var(--border);
+                padding-bottom: 16px;
             }
-
-            .actions {
-                width: 100%;
+            .sidebar-actions {
+                grid-template-columns: 1fr 1fr;
             }
-
-            button {
-                flex: 1;
+            .sidebar-footer {
+                display: none;
+            }
+            .app-main {
+                padding: 16px;
+                overflow: visible;
+            }
+            .workspace-grid {
+                grid-template-columns: 1fr;
+                height: auto;
+            }
+            .log-panel {
+                grid-column: span 1;
+                height: 320px !important;
+            }
+            .email-viewer-panel {
+                min-height: 500px;
             }
         }
     </style>
 </head>
 <body>
-<main>
-    <header>
-        <h1>Agent Gmail</h1>
-        <div id="status" class="status">Arrete</div>
+<div class="app-container">
+    <!-- Top Header Bar -->
+    <header class="app-header">
+        <div class="header-left">
+            <button class="menu-toggle-btn" aria-label="Menu" type="button">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+            </button>
+            <div class="app-logo">
+                <svg class="gmail-logo" viewBox="0 0 24 24" width="26" height="26">
+                    <path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2z" fill="#f44336"/>
+                    <path d="M22 6v12c0 1.1-.9 2-2 2h-2V8l-6 4-6-4v12H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2h1l9 6 9-6h1c1.1 0 2 .9 2 2z" fill="#e02f2f"/>
+                </svg>
+                <span class="logo-text">Agent<span class="logo-accent">Gmail</span></span>
+            </div>
+        </div>
+        
+        <div class="header-center">
+            <div class="search-bar-wrapper">
+                <svg class="search-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                <input type="text" class="search-input" placeholder="Rechercher des e-mails ou des logs..." readonly value="in:inbox agent:active">
+            </div>
+        </div>
+        
+        <div class="header-right">
+            <div id="statusIndicator" class="status-indicator">
+                <span class="status-pulse"></span>
+                <span id="status">Arrête</span>
+            </div>
+            <div class="user-profile">
+                <span class="avatar-letter">A</span>
+            </div>
+        </div>
     </header>
 
-    <div class="actions">
-        <button id="startButton" type="button">Demarrer</button>
-        <button id="stopButton" class="stop-button" type="button">Arreter</button>
-    </div>
-
-    <section class="layout">
-        <!-- New Inbox Viewer Panel -->
-        <div class="panel">
-            <div class="panel-header-with-actions">
-                <h2>Boite de reception</h2>
-                <button id="refreshInboxButton" class="refresh-button" type="button" title="Rafraichir la boite de reception">
-                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M23 4v6h-6M1 20v-6h6"></path>
-                        <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
-                    </svg>
+    <div class="app-body">
+        <!-- Sidebar Navigation -->
+        <aside class="app-sidebar">
+            <div class="sidebar-actions">
+                <button id="startButton" class="btn-action start-btn" type="button">
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                    <span>Démarrer</span>
+                </button>
+                <button id="stopButton" class="btn-action stop-btn" type="button" disabled>
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+                    <span>Arrêter</span>
                 </button>
             </div>
-            <div id="inboxList" class="inbox-list">
-                <div class="inbox-placeholder">Chargement des e-mails...</div>
+            
+            <nav class="sidebar-nav">
+                <a href="#" class="nav-item active">
+                    <svg class="nav-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                    <span class="nav-label">Boîte de réception</span>
+                    <span id="inboxBadge" class="nav-badge">0</span>
+                </a>
+                <a href="#console-panel" class="nav-item">
+                    <svg class="nav-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 17 10 11 4 5"></polyline><line x1="12" y1="19" x2="20" y2="19"></line></svg>
+                    <span class="nav-label">Console Agent</span>
+                </a>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <div class="agent-card">
+                    <div class="agent-avatar">🤖</div>
+                    <div class="agent-details">
+                        <span class="agent-name">Agent IA Gmail</span>
+                        <span class="agent-desc">GPT-4o Actif</span>
+                    </div>
+                </div>
             </div>
-        </div>
+        </aside>
 
-        <div class="cards">
-            <article class="card">
-                <h2>Email recu</h2>
-                <div id="emailContent" class="content placeholder">En attente d'un email principal...</div>
-            </article>
+        <!-- Main Workspace -->
+        <main class="app-main">
+            <div class="workspace-grid">
+                <!-- Inbox Column (Left Pane) -->
+                <div class="panel inbox-panel">
+                    <div class="panel-header-with-actions">
+                        <h2>Boîte de réception</h2>
+                        <button id="refreshInboxButton" class="refresh-button" type="button" title="Rafraîchir la boîte de réception">
+                            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M23 4v6h-6M1 20v-6h6"></path>
+                                <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+                            </svg>
+                        </button>
+                    </div>
+                    <div id="inboxList" class="inbox-list">
+                        <div class="inbox-placeholder">Chargement des e-mails...</div>
+                    </div>
+                </div>
 
-            <article class="card">
-                <h2>Reponse envoyee</h2>
-                <div id="replyContent" class="content placeholder">La reponse generee apparaitra ici.</div>
-            </article>
-        </div>
+                <!-- Email Detail Pane (Center Pane) -->
+                <div class="email-viewer-panel">
+                    <!-- Placeholder when no email is selected -->
+                    <div id="viewerPlaceholder" class="viewer-placeholder">
+                        <div class="placeholder-art">
+                            <svg viewBox="0 0 24 24" width="60" height="60" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                        </div>
+                        <h3>Sélectionnez un e-mail</h3>
+                        <p>Choisissez un message dans la liste à gauche pour afficher ses détails et la réponse automatique de l'agent.</p>
+                    </div>
 
-        <div class="panel">
-            <h2>Communication de l'agent</h2>
-            <div id="log" class="log" aria-live="polite"></div>
-        </div>
-    </section>
-</main>
+                    <!-- Actual content layout when active -->
+                    <div id="viewerContent" class="viewer-content" style="display: none;">
+                        <div class="viewer-header">
+                            <h2 id="viewSubject">Objet de l'e-mail</h2>
+                            <div class="viewer-meta">
+                                <div class="sender-info">
+                                    <div id="viewSenderChar" class="sender-avatar">U</div>
+                                    <div class="sender-text">
+                                        <span id="viewSenderName" class="sender-name">Nom de l'expéditeur</span>
+                                        <span id="viewSenderEmail" class="sender-email">sender@email.com</span>
+                                    </div>
+                                </div>
+                                <span id="viewEmailDate" class="email-date">Date</span>
+                            </div>
+                        </div>
+                        
+                        <div class="conversation-thread">
+                            <!-- Received Email Card -->
+                            <div class="thread-card received-email">
+                                <div class="card-tag">E-mail Reçu</div>
+                                <div id="emailContent" class="email-body">Contenu de l'e-mail reçu...</div>
+                            </div>
+                            
+                            <!-- Generated AI Reply Card -->
+                            <div class="thread-card ai-reply">
+                                <div class="card-tag ai-tag">
+                                    <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-right: 4px;"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+                                    Réponse IA Générée
+                                </div>
+                                <div id="replyContent" class="email-body reply-body">La réponse automatique apparaîtra ici...</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SSE Logs Column (Right Pane) -->
+                <div class="panel log-panel" id="console-panel">
+                    <div class="panel-header-with-actions">
+                        <h2>Console de l'Agent</h2>
+                        <button class="clear-log-btn" onclick="document.getElementById('log').innerHTML='';" title="Effacer les journaux" type="button">
+                            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                        </button>
+                    </div>
+                    <div id="log" class="log" aria-live="polite"></div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
 
 <script>
     const startButton = document.getElementById('startButton');
     const stopButton = document.getElementById('stopButton');
     const log = document.getElementById('log');
     const statusLabel = document.getElementById('status');
+    const statusIndicator = document.getElementById('statusIndicator');
     const emailContent = document.getElementById('emailContent');
     const replyContent = document.getElementById('replyContent');
     const refreshInboxButton = document.getElementById('refreshInboxButton');
     const inboxList = document.getElementById('inboxList');
+    const inboxBadge = document.getElementById('inboxBadge');
+
+    const viewerPlaceholder = document.getElementById('viewerPlaceholder');
+    const viewerContent = document.getElementById('viewerContent');
+    const viewSubject = document.getElementById('viewSubject');
+    const viewSenderChar = document.getElementById('viewSenderChar');
+    const viewSenderName = document.getElementById('viewSenderName');
+    const viewSenderEmail = document.getElementById('viewSenderEmail');
+    const viewEmailDate = document.getElementById('viewEmailDate');
 
     startButton.addEventListener('click', () => command('/agent/start'));
     stopButton.addEventListener('click', () => command('/agent/stop'));
@@ -458,7 +1106,7 @@
             applyStatus(await response.json());
         } catch (error) {
             appendStep({
-                emoji: 'ERR',
+                emoji: '🚨',
                 message: 'Commande impossible: ' + error.message,
                 timestamp: new Date().toISOString(),
                 type: 'error'
@@ -482,11 +1130,11 @@
 
     function applyStatus(status) {
         if (status.active) {
-            setStatus(status.running ? 'En traitement' : 'Actif', 'running');
+            setStatus(status.running ? 'Traitement...' : 'Agent Actif', 'running');
             startButton.disabled = true;
             stopButton.disabled = false;
         } else {
-            setStatus('Arrete', 'done');
+            setStatus('Arrêté', 'done');
             startButton.disabled = false;
             stopButton.disabled = true;
         }
@@ -508,10 +1156,12 @@
 
     function renderInbox(emails) {
         if (!emails || emails.length === 0) {
-            inboxList.innerHTML = '<div class="inbox-placeholder">Aucun e-mail trouve.</div>';
+            inboxList.innerHTML = '<div class="inbox-placeholder">Aucun e-mail trouvé.</div>';
+            inboxBadge.textContent = '0';
             return;
         }
 
+        inboxBadge.textContent = emails.length;
         inboxList.innerHTML = '';
         emails.forEach((email) => {
             const item = document.createElement('div');
@@ -532,17 +1182,33 @@
             `;
 
             item.addEventListener('click', () => {
-                // Set active state
+                // Set active class
                 document.querySelectorAll('.inbox-item').forEach(el => el.classList.remove('active'));
                 item.classList.add('active');
 
-                // Display content
-                setContent(emailContent, email.body, false);
-                setContent(replyContent, "Cliquez sur \"Demarrer\" pour faire repondre l'agent a cet e-mail automatiquement, ou attendez le prochain scan.", true);
+                // Display dynamic content in details panel
+                viewerPlaceholder.style.display = 'none';
+                viewerContent.style.display = 'flex';
+
+                viewSubject.textContent = email.subject || "(Sans objet)";
+                viewSenderChar.textContent = (email.from.trim().charAt(0) || 'U').toUpperCase();
                 
-                // Highlight active email header
-                const activeCardHeader = document.querySelector('.cards .card:first-child h2');
-                activeCardHeader.textContent = `Email recu - De : ${email.from.split('<')[0].trim()}`;
+                const fromParts = email.from.split('<');
+                viewSenderName.textContent = fromParts[0].trim() || "Expéditeur Inconnu";
+                viewSenderEmail.textContent = fromParts[1] ? '<' + fromParts[1] : email.from;
+                viewEmailDate.textContent = new Intl.DateTimeFormat('fr-FR', {
+                    dateStyle: 'medium',
+                    timeStyle: 'short'
+                }).format(new Date(email.internalDateMillis));
+
+                // Display body
+                setContent(emailContent, email.body || "(Aucun contenu)", false);
+                
+                if (email.processed) {
+                    setContent(replyContent, "Cet e-mail a déjà été traité automatiquement par l'agent IA.", true);
+                } else {
+                    setContent(replyContent, "Cliquez sur \"Démarrer\" pour faire répondre l'agent à cet e-mail automatiquement, ou attendez le prochain scan planifié.", true);
+                }
             });
 
             inboxList.appendChild(item);
@@ -566,8 +1232,19 @@
             const step = JSON.parse(event.data);
             appendStep(step);
 
+            // If a live cycle is processing an email, display it dynamically in the thread view
+            if (step.emailContent || step.generatedReply) {
+                viewerPlaceholder.style.display = 'none';
+                viewerContent.style.display = 'flex';
+            }
+
             if (step.emailContent) {
                 setContent(emailContent, step.emailContent, false);
+                viewSubject.textContent = "Analyse de l'e-mail reçu...";
+                viewSenderChar.textContent = "🤖";
+                viewSenderName.textContent = "Agent IA Gmail";
+                viewSenderEmail.textContent = "Traitement en cours...";
+                viewEmailDate.textContent = formatTime(step.timestamp);
             }
 
             if (step.generatedReply) {
@@ -587,10 +1264,10 @@
 
         source.onerror = () => {
             appendStep({
-                emoji: 'ERR',
+                emoji: '🔄',
                 message: 'Flux agent interrompu. Reconnexion en cours...',
                 timestamp: new Date().toISOString(),
-                type: 'error'
+                type: 'info'
             });
         };
     }
@@ -600,16 +1277,18 @@
         row.className = `step ${step.type === 'error' ? 'error' : ''}`;
 
         const badge = document.createElement('div');
-        badge.className = 'badge';
+        badge.className = 'step-badge';
         badge.textContent = step.emoji;
 
         const body = document.createElement('div');
+        body.className = 'step-body';
+
         const message = document.createElement('p');
-        message.className = 'message';
+        message.className = 'step-message';
         message.textContent = step.message;
 
         const time = document.createElement('span');
-        time.className = 'time';
+        time.className = 'step-time';
         time.textContent = formatTime(step.timestamp);
 
         body.appendChild(message);
@@ -627,7 +1306,7 @@
 
     function setStatus(text, className) {
         statusLabel.textContent = text;
-        statusLabel.className = `status ${className}`;
+        statusIndicator.className = `status-indicator ${className}`;
     }
 
     function formatTime(timestamp) {
