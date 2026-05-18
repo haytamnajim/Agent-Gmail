@@ -87,6 +87,69 @@ public class GmailService {
         return receivedEmails;
     }
 
+    public List<ReceivedEmail> findRecentInboxEmails(int maxResults) {
+        try {
+            Gmail gmail = gmailConfig.createGmailClient();
+            ListMessagesResponse response = gmail.users()
+                    .messages()
+                    .list(USER_ID)
+                    .setQ("in:inbox")
+                    .setMaxResults((long) maxResults)
+                    .execute();
+
+            List<Message> messages = response.getMessages();
+            if (messages == null || messages.isEmpty()) {
+                return getDemoEmails();
+            }
+
+            return messages.stream()
+                    .map(message -> fetchReceivedEmail(gmail, message.getId()))
+                    .flatMap(Optional::stream)
+                    .toList();
+        } catch (Exception e) {
+            LOGGER.warn("Impossible de recuperer les e-mails reels (OAuth non configure ou erreur). Utilisation des e-mails de demonstration : {}", e.getMessage());
+            return getDemoEmails();
+        }
+    }
+
+    private List<ReceivedEmail> getDemoEmails() {
+        return List.of(
+                new ReceivedEmail(
+                        "demo-1",
+                        "thread-1",
+                        System.currentTimeMillis() - 120000,
+                        "msg-id-1",
+                        "msg-id-1",
+                        "Hassan Alami <hassan.alami@example.com>",
+                        "hassan.alami@example.com",
+                        "Demande de devis pour reparation moteur",
+                        "Bonjour,\n\nJ'aimerais obtenir un devis pour la reparation de la boite de vitesses de ma Peugeot 3008. Elle fait un bruit etrange au passage de la troisieme vitesse.\n\nCordialement,\nHassan Alami"
+                ),
+                new ReceivedEmail(
+                        "demo-2",
+                        "thread-2",
+                        System.currentTimeMillis() - 600000,
+                        "msg-id-2",
+                        "msg-id-2",
+                        "Marie Dubois <marie.dubois@example.com>",
+                        "marie.dubois@example.com",
+                        "Disponibilite des pieces de rechange Golf 7",
+                        "Bonjour,\n\nAvez-vous des plaquettes de frein d'origine pour une Volkswagen Golf VII (2018) en stock ? Est-il possible de passer les recuperer cet apres-midi ?\n\nMerci,\nMarie"
+                ),
+                new ReceivedEmail(
+                        "demo-3",
+                        "thread-3",
+                        System.currentTimeMillis() - 3600000,
+                        "msg-id-3",
+                        "msg-id-3",
+                        "Karim Benjelloun <k.benjelloun@example.com>",
+                        "k.benjelloun@example.com",
+                        "Question sur les tarifs de diagnostic valise",
+                        "Bonjour l'equipe,\n\nJe souhaiterais connaitre vos tarifs et disponibilites pour effectuer un passage a la valise de diagnostic sur ma Renault Clio 4 qui affiche un voyant moteur orange.\n\nMerci de votre retour rapide.\n\nKarim"
+                )
+        );
+    }
+
     public void sendReply(ReceivedEmail receivedEmail, String reply) throws Exception {
         Gmail gmail = gmailConfig.createGmailClient();
 

@@ -60,6 +60,10 @@ public class AgentService {
         );
     }
 
+    public List<GmailService.ReceivedEmail> getRecentInboxEmails(int limit) {
+        return gmailService.findRecentInboxEmails(limit);
+    }
+
     public Map<String, Object> start() {
         if (!pollingEnabled) {
             broadcast(AgentStep.error("Le polling automatique est desactive dans la configuration."));

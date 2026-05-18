@@ -81,6 +81,7 @@ public class GmailConfig {
             LocalServerReceiver receiver = new LocalServerReceiver.Builder()
                     // Avec un client OAuth de type "web", cette URI doit etre declaree dans Google Cloud :
                     // http://localhost:8888/Callback
+                    .setHost("localhost")
                     .setPort(oauthCallbackPort)
                     .build();
 

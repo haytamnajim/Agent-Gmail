@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
+import com.agent.service.GmailService;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -49,5 +51,11 @@ public class AgentController {
     @ResponseBody
     public Map<String, Object> status() {
         return agentService.status();
+    }
+
+    @GetMapping("/agent/emails")
+    @ResponseBody
+    public List<GmailService.ReceivedEmail> getRecentEmails() {
+        return agentService.getRecentInboxEmails(10);
     }
 }
