@@ -3,38 +3,45 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Agent Gmail - Espace de Travail</title>
+    <title>Agent Gmail - Espace de Travail Premium</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
         
         :root {
             color-scheme: light;
-            --bg-app: #f6f8fc;
-            --primary: #1a73e8;
-            --primary-light: #e8f0fe;
-            --primary-dark: #1557b0;
-            --surface: #ffffff;
-            --text-main: #1f1f1f;
-            --text-sub: #5f6368;
-            --border: #e0e3e9;
-            --danger: #d93025;
-            --danger-light: #fce8e6;
-            --danger-dark: #b00020;
-            --success: #188038;
-            --success-light: #e6f4ea;
-            --inbox-active: #c2e7ff;
-            --inbox-active-text: #001d35;
-            --shadow-subtle: 0 1px 3px rgba(60,64,67,0.12), 0 1px 2px rgba(60,64,67,0.24);
-            --shadow-card: 0 4px 18px rgba(0, 0, 0, 0.03);
-            --shadow-panel: 0 10px 30px rgba(26, 73, 144, 0.04);
-            --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-            --radius-sm: 8px;
+            --bg-app: #F5F7FB;
+            --sidebar-bg: rgba(255, 255, 255, 0.75);
+            --primary: #4F8CFF;
+            --primary-light: rgba(79, 140, 255, 0.08);
+            --primary-gradient: linear-gradient(135deg, #4F8CFF, #7C3AED);
+            --primary-gradient-hover: linear-gradient(135deg, #3b7aff, #6b26d9);
+            --accent-glow: 0 0 20px rgba(79, 140, 255, 0.25);
+            --surface: rgba(255, 255, 255, 0.8);
+            --surface-solid: #ffffff;
+            --border: rgba(15, 23, 42, 0.06);
+            --border-hover: rgba(15, 23, 42, 0.12);
+            --text-main: #111827;
+            --text-sub: #6B7280;
+            --success: #22C55E;
+            --success-light: rgba(34, 197, 94, 0.1);
+            --danger: #EF4444;
+            --danger-light: rgba(239, 68, 68, 0.15);
+            --danger-dark: #EF4444;
+            --radius-sm: 10px;
             --radius-md: 16px;
             --radius-lg: 24px;
+            --shadow-subtle: 0 4px 12px rgba(15, 23, 42, 0.02);
+            --shadow-card: 0 10px 30px rgba(15, 23, 42, 0.03);
+            --shadow-panel: 0 20px 40px rgba(15, 23, 42, 0.04);
+            --transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            --sidebar-width: 280px;
+            --console-bg: #0A0F1D;
+            --console-border: rgba(255, 255, 255, 0.04);
         }
 
         * {
             box-sizing: border-box;
+            outline: none;
         }
 
         body {
@@ -42,9 +49,27 @@
             min-height: 100vh;
             background: var(--bg-app);
             color: var(--text-main);
-            font-family: 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             line-height: 1.5;
             overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Scrollbar styling */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(15, 23, 42, 0.1);
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(15, 23, 42, 0.2);
         }
 
         /* App Layout Container */
@@ -52,6 +77,7 @@
             display: flex;
             flex-direction: column;
             height: 100vh;
+            width: 100vw;
         }
 
         /* Top Header Bar */
@@ -59,19 +85,21 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            height: 64px;
-            padding: 0 24px;
-            background: var(--bg-app);
+            height: 70px;
+            padding: 0 28px;
+            background: rgba(245, 247, 251, 0.85);
+            backdrop-filter: blur(20px);
             border-bottom: 1px solid var(--border);
             gap: 16px;
             z-index: 100;
+            flex-shrink: 0;
         }
 
         .header-left {
             display: flex;
             align-items: center;
             gap: 16px;
-            min-width: 240px;
+            min-width: var(--sidebar-width);
         }
 
         .menu-toggle-btn {
@@ -80,7 +108,7 @@
             color: var(--text-sub);
             padding: 8px;
             cursor: pointer;
-            border-radius: 50%;
+            border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -88,7 +116,7 @@
         }
 
         .menu-toggle-btn:hover {
-            background: #edf0f5;
+            background: rgba(15, 23, 42, 0.04);
             color: var(--text-main);
         }
 
@@ -100,43 +128,44 @@
         }
 
         .gmail-logo {
-            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.06));
+            filter: drop-shadow(0 2px 8px rgba(79, 140, 255, 0.15));
         }
 
         .logo-text {
-            font-size: 20px;
-            font-weight: 600;
-            color: #444746;
+            font-size: 19px;
+            font-weight: 700;
+            color: var(--text-main);
             letter-spacing: -0.5px;
         }
 
         .logo-accent {
-            color: var(--primary);
-            font-weight: 700;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
         .header-center {
             flex: 1;
             display: flex;
             justify-content: center;
-            max-width: 720px;
+            max-width: 600px;
         }
 
         .search-bar-wrapper {
             width: 100%;
             display: flex;
             align-items: center;
-            background: #eaf1fb;
+            background: rgba(15, 23, 42, 0.03);
             border-radius: 28px;
             padding: 0 20px;
-            height: 48px;
+            height: 42px;
             transition: var(--transition);
             border: 1px solid transparent;
         }
 
         .search-bar-wrapper:focus-within {
-            background: var(--surface);
-            box-shadow: 0 1px 3px 0 rgba(60,64,67,0.3), 0 4px 8px 3px rgba(60,64,67,0.15);
+            background: var(--surface-solid);
+            box-shadow: var(--shadow-card), 0 0 0 1px var(--primary);
             border-color: transparent;
         }
 
@@ -150,7 +179,7 @@
             border: 0;
             background: transparent;
             font-family: inherit;
-            font-size: 15px;
+            font-size: 13.5px;
             color: var(--text-main);
             outline: none;
             font-weight: 500;
@@ -160,7 +189,6 @@
             display: flex;
             align-items: center;
             gap: 16px;
-            min-width: 240px;
             justify-content: flex-end;
         }
 
@@ -169,29 +197,30 @@
             display: flex;
             align-items: center;
             gap: 8px;
-            padding: 6px 16px;
-            background: var(--surface);
+            padding: 6px 14px;
+            background: rgba(255, 255, 255, 0.85);
             border: 1px solid var(--border);
             border-radius: 20px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.03);
+            box-shadow: var(--shadow-subtle);
             font-weight: 600;
-            font-size: 13px;
+            font-size: 12px;
             color: var(--text-sub);
             transition: var(--transition);
         }
 
         .status-pulse {
-            width: 8px;
-            height: 8px;
+            width: 7px;
+            height: 7px;
             border-radius: 50%;
             background: #9aa0a6;
             display: inline-block;
         }
 
         .status-indicator.running {
-            background: var(--primary-light);
-            border-color: rgba(26,115,232,0.2);
-            color: var(--primary-dark);
+            background: rgba(79, 140, 255, 0.08);
+            border-color: rgba(79, 140, 255, 0.15);
+            color: var(--primary);
+            box-shadow: 0 0 15px rgba(79, 140, 255, 0.08);
         }
 
         .status-indicator.running .status-pulse {
@@ -201,7 +230,7 @@
 
         .status-indicator.done {
             background: var(--success-light);
-            border-color: rgba(24,128,56,0.2);
+            border-color: rgba(34, 197, 94, 0.15);
             color: var(--success);
         }
 
@@ -211,7 +240,7 @@
 
         .status-indicator.error {
             background: var(--danger-light);
-            border-color: rgba(217,48,37,0.2);
+            border-color: rgba(239, 68, 68, 0.2);
             color: var(--danger);
         }
 
@@ -221,29 +250,29 @@
         }
 
         @keyframes pulse-glow {
-            0% { transform: scale(0.9); box-shadow: 0 0 0 0 rgba(26,115,232,0.7); }
-            70% { transform: scale(1.1); box-shadow: 0 0 0 6px rgba(26,115,232,0); }
-            100% { transform: scale(0.9); box-shadow: 0 0 0 0 rgba(26,115,232,0); }
+            0% { transform: scale(0.9); box-shadow: 0 0 0 0 rgba(79, 140, 255, 0.5); }
+            70% { transform: scale(1.1); box-shadow: 0 0 0 5px rgba(79, 140, 255, 0); }
+            100% { transform: scale(0.9); box-shadow: 0 0 0 0 rgba(79, 140, 255, 0); }
         }
 
         @keyframes pulse-glow-red {
-            0% { transform: scale(0.9); box-shadow: 0 0 0 0 rgba(217,48,37,0.7); }
-            70% { transform: scale(1.1); box-shadow: 0 0 0 6px rgba(217,48,37,0); }
-            100% { transform: scale(0.9); box-shadow: 0 0 0 0 rgba(217,48,37,0); }
+            0% { transform: scale(0.9); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.5); }
+            70% { transform: scale(1.1); box-shadow: 0 0 0 5px rgba(239, 68, 68, 0); }
+            100% { transform: scale(0.9); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
         }
 
         .user-profile {
             width: 32px;
             height: 32px;
             border-radius: 50%;
-            background: #e28743;
+            background: var(--primary-gradient);
             color: white;
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: 700;
-            font-size: 14px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            font-size: 13px;
+            box-shadow: 0 3px 10px rgba(79, 140, 255, 0.2);
         }
 
         /* App Body Structure */
@@ -252,102 +281,161 @@
             flex: 1;
             overflow: hidden;
             background: var(--bg-app);
+            padding: 0 12px 12px 12px;
+            gap: 16px;
         }
 
-        /* Sidebar Navigation */
+        /* Sidebar Navigation - Glassmorphism */
         .app-sidebar {
             width: var(--sidebar-width);
             flex-shrink: 0;
             display: flex;
             flex-direction: column;
-            padding: 16px 12px;
-            background: var(--bg-app);
-            border-right: 1px solid transparent;
+            padding: 16px;
+            background: var(--sidebar-bg);
+            backdrop-filter: blur(20px);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-panel);
+            margin-bottom: 4px;
         }
 
         /* Action Buttons Grid in Sidebar */
         .sidebar-actions {
-            display: grid;
-            grid-template-columns: 1fr;
+            display: flex;
+            flex-direction: column;
             gap: 10px;
             margin-bottom: 24px;
         }
 
         .btn-action {
-            height: 48px;
+            height: 46px;
             border: 0;
-            border-radius: 16px;
+            border-radius: var(--radius-md);
             padding: 0 20px;
             font-family: inherit;
-            font-size: 14px;
+            font-size: 13.5px;
             font-weight: 600;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 12px;
-            box-shadow: var(--shadow-subtle);
+            gap: 10px;
             transition: var(--transition);
         }
 
         .start-btn {
-            background: var(--inbox-active);
-            color: var(--inbox-active-text);
+            background: var(--primary-gradient);
+            color: #ffffff;
+            box-shadow: 0 4px 15px rgba(79, 140, 255, 0.25), var(--shadow-subtle);
+            border: none;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .start-btn::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -50%;
+            width: 200%;
+            height: 100%;
+            background: linear-gradient(to right, rgba(255, 255, 255, 0) 30%, rgba(255, 255, 255, 0.2) 50%, rgba(255, 255, 255, 0) 70%);
+            transform: skewX(-25deg);
+            transition: 0.75s;
+            opacity: 0;
+        }
+
+        .start-btn:hover:not(:disabled)::after {
+            animation: shine-effect 1.5s infinite;
+            opacity: 1;
         }
 
         .start-btn:hover:not(:disabled) {
-            box-shadow: 0 1px 3px 0 rgba(60,64,67,0.3), 0 4px 8px 3px rgba(60,64,67,0.15);
-            background: #b5e1ff;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(79, 140, 255, 0.35), var(--shadow-card);
+        }
+
+        @keyframes shine-effect {
+            0% { left: -50%; }
+            100% { left: 125%; }
+        }
+
+        @keyframes pulse-btn {
+            0% { box-shadow: 0 0 0 0 rgba(79, 140, 255, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(79, 140, 255, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(79, 140, 255, 0); }
+        }
+
+        .start-btn:not(:disabled) {
+            animation: pulse-btn 2s infinite;
         }
 
         .stop-btn {
-            background: var(--surface);
+            background: rgba(255, 255, 255, 0.9);
             color: var(--danger);
-            border: 1px solid var(--border);
+            border: 1px solid rgba(239, 68, 68, 0.15);
+            box-shadow: var(--shadow-subtle);
         }
 
         .stop-btn:hover:not(:disabled) {
             background: var(--danger-light);
-            border-color: rgba(217,48,37,0.25);
+            border-color: rgba(239, 68, 68, 0.2);
+            transform: translateY(-1px);
         }
 
         .btn-action:disabled {
             cursor: not-allowed;
-            opacity: 0.5;
-            box-shadow: none;
+            opacity: 0.45;
+            box-shadow: none !important;
+            animation: none !important;
+            transform: none !important;
         }
 
         /* Sidebar Menus */
         .sidebar-nav {
             display: flex;
             flex-direction: column;
-            gap: 4px;
+            gap: 6px;
             flex: 1;
         }
 
         .nav-item {
-            height: 32px;
+            height: 42px;
             display: flex;
             align-items: center;
-            padding: 0 20px 0 12px;
-            border-radius: 16px;
+            padding: 0 16px;
+            border-radius: var(--radius-sm);
             color: var(--text-sub);
             text-decoration: none;
-            font-size: 14px;
+            font-size: 13.5px;
             font-weight: 500;
             gap: 12px;
             transition: var(--transition);
+            position: relative;
         }
 
         .nav-item:hover {
-            background: rgba(60,64,67,0.06);
+            background: rgba(15, 23, 42, 0.04);
             color: var(--text-main);
         }
 
         .nav-item.active {
             background: var(--primary-light);
-            color: var(--primary-dark);
+            color: var(--primary);
             font-weight: 600;
+        }
+
+        .nav-item.active::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 25%;
+            height: 50%;
+            width: 3px;
+            border-radius: 2px;
+            background: var(--primary);
+            box-shadow: 0 0 10px var(--primary);
         }
 
         .nav-icon {
@@ -361,10 +449,10 @@
         .nav-badge {
             font-size: 11px;
             font-weight: 700;
-            padding: 1px 8px;
-            background: rgba(26,115,232,0.15);
-            border-radius: 10px;
-            color: var(--primary-dark);
+            padding: 2px 8px;
+            background: rgba(79, 140, 255, 0.12);
+            border-radius: 20px;
+            color: var(--primary);
         }
 
         .sidebar-footer {
@@ -377,7 +465,7 @@
             align-items: center;
             gap: 12px;
             padding: 12px;
-            background: var(--surface);
+            background: rgba(255, 255, 255, 0.7);
             border: 1px solid var(--border);
             border-radius: var(--radius-md);
             box-shadow: var(--shadow-card);
@@ -391,7 +479,24 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 18px;
+            font-size: 16px;
+            position: relative;
+        }
+
+        .agent-avatar::after {
+            content: '';
+            position: absolute;
+            inset: -2px;
+            border-radius: 50%;
+            background: var(--primary-gradient);
+            z-index: -1;
+            opacity: 0.4;
+            animation: avatar-glow 3s infinite alternate;
+        }
+
+        @keyframes avatar-glow {
+            0% { transform: scale(1); filter: blur(1px); }
+            100% { transform: scale(1.12); filter: blur(4px); }
         }
 
         .agent-details {
@@ -401,19 +506,18 @@
 
         .agent-name {
             font-weight: 600;
-            font-size: 13px;
+            font-size: 12.5px;
             color: var(--text-main);
         }
 
         .agent-desc {
-            font-size: 11px;
+            font-size: 10.5px;
             color: var(--text-sub);
         }
 
         /* Workspace main area */
         .app-main {
             flex: 1;
-            padding: 0 16px 16px 0;
             overflow: hidden;
             display: flex;
         }
@@ -422,29 +526,27 @@
         .workspace-grid {
             width: 100%;
             display: grid;
-            grid-template-columns: 340px 1fr 300px;
+            grid-template-columns: 360px 1fr 320px;
             gap: 16px;
             align-items: stretch;
         }
 
-        /* Panels Shared CSS */
+        /* Panels Shared CSS - Premium Glassmorphism */
         .panel {
             background: var(--surface);
+            backdrop-filter: blur(20px);
             border-radius: var(--radius-lg);
-            border: 1px solid transparent;
+            border: 1px solid var(--border);
             box-shadow: var(--shadow-panel);
             display: flex;
             flex-direction: column;
             overflow: hidden;
+            transition: var(--transition);
         }
 
-        .panel h2 {
-            margin: 0;
-            font-size: 16px;
-            font-weight: 600;
-            color: #444746;
-            padding: 16px 20px;
-            user-select: none;
+        .panel:hover {
+            box-shadow: var(--shadow-panel), 0 8px 30px rgba(79, 140, 255, 0.01);
+            border-color: var(--border-hover);
         }
 
         .panel-header-with-actions {
@@ -452,13 +554,18 @@
             align-items: center;
             justify-content: space-between;
             border-bottom: 1px solid var(--border);
-            height: 52px;
-            padding-right: 12px;
+            height: 58px;
+            padding: 0 20px;
+            background: rgba(255, 255, 255, 0.4);
+            flex-shrink: 0;
         }
 
         .panel-header-with-actions h2 {
-            border-bottom: 0;
-            padding: 0 20px;
+            margin: 0;
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--text-main);
+            letter-spacing: -0.2px;
         }
 
         /* Left Inbox Column */
@@ -471,7 +578,8 @@
             background: transparent;
             border: 0;
             color: var(--text-sub);
-            padding: 8px;
+            width: 32px;
+            height: 32px;
             cursor: pointer;
             border-radius: 50%;
             display: flex;
@@ -482,7 +590,7 @@
 
         .refresh-button:hover,
         .clear-log-btn:hover {
-            background: rgba(60,64,67,0.06);
+            background: rgba(15, 23, 42, 0.05);
             color: var(--primary);
         }
 
@@ -493,63 +601,99 @@
         .inbox-list {
             flex: 1;
             overflow-y: auto;
-            background: var(--surface);
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            background: rgba(255, 255, 255, 0.2);
         }
 
         .inbox-placeholder {
-            padding: 32px 24px;
+            padding: 40px 20px;
             text-align: center;
             color: var(--text-sub);
             font-size: 13px;
             font-style: italic;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: var(--radius-md);
+            border: 1px dashed var(--border);
+            margin: 12px;
         }
 
+        /* Inbox Card Item Redesign */
         .inbox-item {
-            padding: 14px 18px;
-            border-bottom: 1px solid #f2f3f5;
+            padding: 16px;
+            background: rgba(255, 255, 255, 0.7);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
             cursor: pointer;
             transition: var(--transition);
             position: relative;
             display: flex;
-            flex-direction: column;
-            gap: 4px;
+            gap: 12px;
             text-align: left;
             user-select: none;
-        }
-
-        .inbox-item:last-child {
-            border-bottom: 0;
+            box-shadow: var(--shadow-subtle);
         }
 
         .inbox-item:hover {
-            background: #f7f9fc;
-            box-shadow: inset 2px 0 0 var(--primary);
+            background: var(--surface-solid);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-card);
+            border-color: rgba(79, 140, 255, 0.2);
         }
 
         .inbox-item.active {
-            background: #e2f0fd;
-            box-shadow: inset 4px 0 0 var(--primary);
+            background: var(--surface-solid);
+            border-color: var(--primary);
+            box-shadow: var(--shadow-card), 0 0 0 1px var(--primary);
+        }
+
+        .inbox-avatar-col {
+            display: flex;
+            align-items: flex-start;
+        }
+
+        .inbox-item-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, rgba(79, 140, 255, 0.15), rgba(124, 58, 237, 0.15));
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 13.5px;
+            border: 1px solid rgba(79, 140, 255, 0.05);
+        }
+
+        .inbox-content-col {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            min-width: 0;
         }
 
         .inbox-item-header {
             display: flex;
             justify-content: space-between;
-            align-items: flex-start;
+            align-items: center;
             gap: 8px;
         }
 
         .inbox-item-sender {
             font-weight: 700;
-            font-size: 13.5px;
+            font-size: 13px;
             color: var(--text-main);
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            max-width: 180px;
         }
 
         .inbox-item-time {
-            font-size: 11px;
+            font-size: 10.5px;
             color: var(--text-sub);
             font-weight: 500;
             white-space: nowrap;
@@ -558,46 +702,84 @@
         .inbox-item-subject {
             font-weight: 600;
             font-size: 12.5px;
-            color: #3c4043;
+            color: #334155;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
         }
 
         .inbox-item-snippet {
-            font-size: 11.5px;
+            font-size: 11px;
             color: var(--text-sub);
             display: -webkit-box;
             -webkit-line-clamp: 2;
             -webkit-box-orient: vertical;
             overflow: hidden;
             text-overflow: ellipsis;
-            line-height: 1.4;
+            line-height: 1.45;
         }
 
-        .inbox-item.demo-badge::after {
-            content: "Démo";
-            position: absolute;
-            right: 18px;
-            bottom: 8px;
+        .inbox-item-badges {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 6px;
+        }
+
+        .badge-priority {
             font-size: 9px;
-            background: rgba(26, 115, 232, 0.1);
-            color: var(--primary-dark);
+            font-weight: 700;
+            color: #7C3AED;
+            background: rgba(124, 58, 237, 0.08);
+            border: 1px solid rgba(124, 58, 237, 0.12);
             padding: 1px 6px;
             border-radius: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .badge-ai {
+            font-size: 9px;
             font-weight: 700;
-            letter-spacing: 0.5px;
+            color: var(--success);
+            background: var(--success-light);
+            border: 1px solid rgba(34, 197, 94, 0.15);
+            padding: 1px 6px;
+            border-radius: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .badge-pending {
+            font-size: 9px;
+            font-weight: 700;
+            color: var(--primary);
+            background: var(--primary-light);
+            border: 1px solid rgba(79, 140, 255, 0.15);
+            padding: 1px 6px;
+            border-radius: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
         }
 
         /* Center Email Detail Pane */
         .email-viewer-panel {
             background: var(--surface);
+            backdrop-filter: blur(20px);
             border-radius: var(--radius-lg);
+            border: 1px solid var(--border);
             box-shadow: var(--shadow-panel);
             display: flex;
             flex-direction: column;
             overflow: hidden;
             min-height: 100%;
+            transition: var(--transition);
+        }
+
+        .email-viewer-panel:hover {
+            border-color: var(--border-hover);
         }
 
         .viewer-placeholder {
@@ -610,31 +792,75 @@
             text-align: center;
             color: var(--text-sub);
             user-select: none;
+            background: rgba(255, 255, 255, 0.3);
         }
 
-        .placeholder-art {
-            color: rgba(26, 115, 232, 0.25);
+        .empty-state-svg {
             margin-bottom: 20px;
-            animation: float 4s ease-in-out infinite;
         }
 
-        @keyframes float {
+        .spin-slow {
+            animation: spin 30s linear infinite;
+            transform-origin: center;
+        }
+
+        .spin-reverse {
+            animation: spin-back 20s linear infinite;
+            transform-origin: center;
+        }
+
+        .float-anim {
+            animation: floating 4s ease-in-out infinite;
+        }
+
+        .pulse-spark {
+            animation: spark-scale 2s ease-in-out infinite alternate;
+            transform-origin: 145px 65px;
+        }
+
+        .pulse-spark-2 {
+            animation: spark-scale-2 2.5s ease-in-out infinite alternate;
+            transform-origin: 55px 120px;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes spin-back {
+            from { transform: rotate(360deg); }
+            to { transform: rotate(0deg); }
+        }
+
+        @keyframes floating {
             0% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
+            50% { transform: translateY(-8px); }
             100% { transform: translateY(0px); }
+        }
+
+        @keyframes spark-scale {
+            0% { transform: scale(0.85); opacity: 0.5; }
+            100% { transform: scale(1.15); opacity: 1; }
+        }
+
+        @keyframes spark-scale-2 {
+            0% { transform: scale(1.15); opacity: 1; }
+            100% { transform: scale(0.85); opacity: 0.5; }
         }
 
         .viewer-placeholder h3 {
             margin: 0 0 8px 0;
-            color: #444746;
-            font-size: 18px;
-            font-weight: 600;
+            color: var(--text-main);
+            font-size: 16px;
+            font-weight: 700;
+            letter-spacing: -0.2px;
         }
 
         .viewer-placeholder p {
             margin: 0;
             max-width: 320px;
-            font-size: 13px;
+            font-size: 12.5px;
             line-height: 1.6;
         }
 
@@ -643,19 +869,23 @@
             display: flex;
             flex-direction: column;
             overflow: hidden;
+            background: rgba(255, 255, 255, 0.4);
         }
 
         .viewer-header {
-            padding: 20px 24px;
+            padding: 24px 28px;
             border-bottom: 1px solid var(--border);
+            background: rgba(255, 255, 255, 0.6);
             flex-shrink: 0;
         }
 
         .viewer-header h2 {
             margin: 0 0 16px 0;
-            font-size: 20px;
-            font-weight: 600;
+            font-size: 18px;
+            font-weight: 700;
             color: var(--text-main);
+            line-height: 1.35;
+            letter-spacing: -0.3px;
         }
 
         .viewer-meta {
@@ -675,13 +905,15 @@
             width: 40px;
             height: 40px;
             border-radius: 50%;
-            background: #e3edfa;
-            color: var(--primary-dark);
+            background: var(--primary-light);
+            color: var(--primary);
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: 700;
-            font-size: 16px;
+            font-size: 15px;
+            border: 1px solid rgba(79, 140, 255, 0.1);
+            box-shadow: var(--shadow-subtle);
         }
 
         .sender-text {
@@ -690,18 +922,18 @@
         }
 
         .sender-name {
-            font-weight: 600;
-            font-size: 14px;
+            font-weight: 700;
+            font-size: 13.5px;
             color: var(--text-main);
         }
 
         .sender-email {
-            font-size: 12px;
+            font-size: 11.5px;
             color: var(--text-sub);
         }
 
         .email-date {
-            font-size: 12px;
+            font-size: 11.5px;
             color: var(--text-sub);
             font-weight: 500;
         }
@@ -710,34 +942,35 @@
             flex: 1;
             overflow-y: auto;
             padding: 24px;
-            background: #f8fafe;
             display: flex;
             flex-direction: column;
             gap: 20px;
+            background: rgba(245, 247, 251, 0.3);
         }
 
         .thread-card {
-            background: var(--surface);
+            background: var(--surface-solid);
             border: 1px solid var(--border);
             border-radius: var(--radius-md);
-            padding: 20px;
+            padding: 24px;
             position: relative;
             box-shadow: var(--shadow-card);
             transition: var(--transition);
         }
 
         .thread-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0,0,0,0.04);
+            transform: translateY(-1px);
+            box-shadow: 0 8px 30px rgba(15, 23, 42, 0.05);
+            border-color: var(--border-hover);
         }
 
         .card-tag {
             position: absolute;
             top: -10px;
-            left: 16px;
-            font-size: 10px;
+            left: 20px;
+            font-size: 9px;
             font-weight: 700;
-            background: #eaeef6;
+            background: #EAF0FA;
             color: var(--text-sub);
             padding: 2px 10px;
             border-radius: 20px;
@@ -747,16 +980,17 @@
         }
 
         .card-tag.ai-tag {
-            background: var(--primary-light);
-            color: var(--primary-dark);
-            border-color: rgba(26,115,232,0.25);
+            background: var(--primary-gradient);
+            color: #ffffff;
+            border-color: transparent;
             display: flex;
             align-items: center;
+            box-shadow: 0 4px 10px rgba(79, 140, 255, 0.2);
         }
 
         .email-body {
-            font-size: 13.5px;
-            color: #3c4043;
+            font-size: 13px;
+            color: #334155;
             white-space: pre-wrap;
             overflow-wrap: anywhere;
             line-height: 1.6;
@@ -764,7 +998,7 @@
 
         .reply-body {
             font-weight: 500;
-            color: #1f1f1f;
+            color: var(--text-main);
         }
 
         .email-body.placeholder {
@@ -773,79 +1007,187 @@
         }
 
         .ai-reply {
-            border: 1px solid rgba(26, 115, 232, 0.25);
-            background: linear-gradient(180deg, #ffffff 0%, #f4f8fe 100%);
-            box-shadow: 0 4px 15px rgba(26, 115, 232, 0.04);
+            border: 1px solid rgba(79, 140, 255, 0.2);
+            background: linear-gradient(180deg, #ffffff 0%, #F5F8FF 100%);
+            box-shadow: 0 8px 24px rgba(79, 140, 255, 0.05);
         }
 
-        /* Right SSE Logs Column */
+        /* Suggested actions in detailed view */
+        .suggested-actions-wrapper {
+            margin-top: 16px;
+            border-top: 1px dashed var(--border);
+            padding-top: 16px;
+        }
+
+        .suggested-title {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-sub);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .suggested-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .action-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 11.5px;
+            font-weight: 600;
+            color: var(--text-sub);
+            background: rgba(15, 23, 42, 0.03);
+            border: 1px solid var(--border);
+            padding: 6px 12px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .action-pill:hover {
+            background: var(--primary-light);
+            color: var(--primary);
+            border-color: rgba(79, 140, 255, 0.2);
+            transform: translateY(-1px);
+        }
+
+        /* Right SSE Logs Column (Futuristic Dark Terminal) */
         .log-panel {
             min-height: 100%;
-            background: #111b27;
-            border: 1px solid #1a2c42;
-            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25);
+            background: var(--console-bg) !important;
+            border: 1px solid #1A2238 !important;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35) !important;
+            position: relative;
         }
 
         .log-panel h2 {
-            color: #d1d5db;
-            padding: 16px 20px;
+            color: #F8FAFC !important;
+            margin: 0;
+            font-size: 13.5px;
+            font-weight: 700;
+            letter-spacing: 0.3px;
         }
 
         .log-panel .panel-header-with-actions {
-            border-bottom: 1px solid #1c2e45;
+            background: #0D1426;
+            border-bottom: 1px solid var(--console-border);
+            height: 58px;
+            padding: 0 18px;
+        }
+
+        /* Console Pulse Indicator */
+        .console-status-badge {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(79, 140, 255, 0.1);
+            border: 1px solid rgba(79, 140, 255, 0.2);
+            padding: 3px 8px;
+            border-radius: 6px;
+            margin-right: auto;
+            margin-left: 12px;
+        }
+
+        .console-status-dot {
+            width: 5px;
+            height: 5px;
+            background: var(--primary);
+            border-radius: 50%;
+            animation: console-dot-pulse 1s infinite alternate;
+        }
+
+        @keyframes console-dot-pulse {
+            0% { opacity: 0.3; transform: scale(0.9); }
+            100% { opacity: 1; transform: scale(1.2); }
+        }
+
+        .console-status-text {
+            font-size: 9px;
+            font-weight: 700;
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
         }
 
         .clear-log-btn {
-            color: #9ca3af;
+            color: #94A3B8;
         }
 
         .clear-log-btn:hover {
-            color: #ffffff;
-            background: rgba(255, 255, 255, 0.08);
+            color: #F8FAFC;
+            background: rgba(255, 255, 255, 0.06);
         }
 
+        /* Timeline and Log design */
         .log {
             flex: 1;
-            padding: 12px;
+            padding: 16px 14px;
             overflow-y: auto;
-            font-family: Consolas, "Courier New", monospace;
+            font-family: 'Consolas', 'Fira Code', 'Courier New', monospace;
             font-size: 11.5px;
-            color: #e5e7eb;
+            color: #E2E8F0;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            position: relative;
+        }
+
+        .log::before {
+            content: '';
+            position: absolute;
+            top: 24px;
+            bottom: 24px;
+            left: 21px;
+            width: 1px;
+            background: rgba(255, 255, 255, 0.05);
+            z-index: 0;
         }
 
         .step {
             display: flex;
             gap: 12px;
-            padding: 8px 10px;
-            border-bottom: 1px solid #192738;
+            position: relative;
+            z-index: 1;
             transition: var(--transition);
+            border-radius: 8px;
+            padding: 6px;
         }
 
         .step:hover {
-            background: rgba(255, 255, 255, 0.03);
+            background: rgba(255, 255, 255, 0.02);
         }
 
         .step.error {
-            color: #fca5a5;
-            background: rgba(220, 38, 38, 0.15);
-            border-bottom-color: rgba(220, 38, 38, 0.25);
+            color: #FCA5A5;
+            background: rgba(239, 68, 68, 0.08);
+            border: 1px solid rgba(239, 68, 68, 0.15);
         }
 
         .step-badge {
-            font-size: 11px;
+            font-size: 10px;
             font-weight: 700;
-            padding: 2px 6px;
-            background: #253346;
-            border-radius: 4px;
-            color: #9ca3af;
-            height: fit-content;
-            align-self: flex-start;
-            text-transform: uppercase;
+            width: 18px;
+            height: 18px;
+            background: #1E293B;
+            border-radius: 50%;
+            color: #94A3B8;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .step.error .step-badge {
-            background: #b91c1c;
+            background: var(--danger);
             color: #ffffff;
+            border-color: transparent;
         }
 
         .step-body {
@@ -857,50 +1199,56 @@
 
         .step-message {
             margin: 0;
-            font-weight: 600;
+            font-weight: 500;
             overflow-wrap: anywhere;
-            line-height: 1.4;
+            line-height: 1.45;
         }
 
         .step-time {
-            color: #6b7280;
-            font-size: 10px;
+            color: #64748B;
+            font-size: 9.5px;
         }
 
         /* Responsive Breakpoints */
         @media (max-width: 1280px) {
             .workspace-grid {
-                grid-template-columns: 300px 1fr;
+                grid-template-columns: 320px 1fr;
             }
             .log-panel {
                 grid-column: span 2;
-                height: 280px !important;
-                min-height: 280px !important;
+                height: 300px !important;
+                min-height: 300px !important;
+            }
+            .log::before {
+                bottom: 24px;
             }
         }
 
         @media (max-width: 1024px) {
             .app-container {
                 height: auto;
+                overflow-y: auto;
             }
             .app-body {
                 flex-direction: column;
                 overflow: visible;
+                padding: 12px;
             }
             .app-sidebar {
                 width: 100%;
                 border-right: 0;
-                border-bottom: 1px solid var(--border);
                 padding-bottom: 16px;
             }
             .sidebar-actions {
-                grid-template-columns: 1fr 1fr;
+                flex-direction: row;
+            }
+            .sidebar-actions button {
+                flex: 1;
             }
             .sidebar-footer {
                 display: none;
             }
             .app-main {
-                padding: 16px;
                 overflow: visible;
             }
             .workspace-grid {
@@ -909,10 +1257,10 @@
             }
             .log-panel {
                 grid-column: span 1;
-                height: 320px !important;
+                height: 350px !important;
             }
             .email-viewer-panel {
-                min-height: 500px;
+                min-height: 520px;
             }
         }
     </style>
@@ -923,12 +1271,12 @@
     <header class="app-header">
         <div class="header-left">
             <button class="menu-toggle-btn" aria-label="Menu" type="button">
-                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
             </button>
             <div class="app-logo">
-                <svg class="gmail-logo" viewBox="0 0 24 24" width="26" height="26">
-                    <path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2z" fill="#f44336"/>
-                    <path d="M22 6v12c0 1.1-.9 2-2 2h-2V8l-6 4-6-4v12H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2h1l9 6 9-6h1c1.1 0 2 .9 2 2z" fill="#e02f2f"/>
+                <svg class="gmail-logo" viewBox="0 0 24 24" width="24" height="24">
+                    <path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2z" fill="#4F8CFF"/>
+                    <path d="M22 6v12c0 1.1-.9 2-2 2h-2V8l-6 4-6-4v12H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2h1l9 6 9-6h1c1.1 0 2 .9 2 2z" fill="#7C3AED"/>
                 </svg>
                 <span class="logo-text">Agent<span class="logo-accent">Gmail</span></span>
             </div>
@@ -936,15 +1284,15 @@
         
         <div class="header-center">
             <div class="search-bar-wrapper">
-                <svg class="search-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-                <input type="text" class="search-input" placeholder="Rechercher des e-mails ou des logs..." readonly value="in:inbox agent:active">
+                <svg class="search-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                <input type="text" class="search-input" placeholder="Rechercher dans l'espace de travail..." readonly value="in:inbox agent:active">
             </div>
         </div>
         
         <div class="header-right">
             <div id="statusIndicator" class="status-indicator">
                 <span class="status-pulse"></span>
-                <span id="status">Arrête</span>
+                <span id="status">Arrêté</span>
             </div>
             <div class="user-profile">
                 <span class="avatar-letter">A</span>
@@ -957,23 +1305,23 @@
         <aside class="app-sidebar">
             <div class="sidebar-actions">
                 <button id="startButton" class="btn-action start-btn" type="button">
-                    <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
                     <span>Démarrer</span>
                 </button>
                 <button id="stopButton" class="btn-action stop-btn" type="button" disabled>
-                    <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+                    <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
                     <span>Arrêter</span>
                 </button>
             </div>
             
             <nav class="sidebar-nav">
                 <a href="#" class="nav-item active">
-                    <svg class="nav-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                    <svg class="nav-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
                     <span class="nav-label">Boîte de réception</span>
                     <span id="inboxBadge" class="nav-badge">0</span>
                 </a>
                 <a href="#console-panel" class="nav-item">
-                    <svg class="nav-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 17 10 11 4 5"></polyline><line x1="12" y1="19" x2="20" y2="19"></line></svg>
+                    <svg class="nav-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 17 10 11 4 5"></polyline><line x1="12" y1="19" x2="20" y2="19"></line></svg>
                     <span class="nav-label">Console Agent</span>
                 </a>
             </nav>
@@ -983,7 +1331,7 @@
                     <div class="agent-avatar">🤖</div>
                     <div class="agent-details">
                         <span class="agent-name">Agent IA Gmail</span>
-                        <span class="agent-desc">GPT-4o Actif</span>
+                        <span class="agent-desc">GPT-4o-mini Actif</span>
                     </div>
                 </div>
             </div>
@@ -997,7 +1345,7 @@
                     <div class="panel-header-with-actions">
                         <h2>Boîte de réception</h2>
                         <button id="refreshInboxButton" class="refresh-button" type="button" title="Rafraîchir la boîte de réception">
-                            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M23 4v6h-6M1 20v-6h6"></path>
                                 <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
                             </svg>
@@ -1012,9 +1360,28 @@
                 <div class="email-viewer-panel">
                     <!-- Placeholder when no email is selected -->
                     <div id="viewerPlaceholder" class="viewer-placeholder">
-                        <div class="placeholder-art">
-                            <svg viewBox="0 0 24 24" width="60" height="60" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
-                        </div>
+                        <svg viewBox="0 0 200 200" width="150" height="150" class="empty-state-svg">
+                            <defs>
+                                <linearGradient id="svg-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stop-color="#4F8CFF" stop-opacity="0.8" />
+                                    <stop offset="100%" stop-color="#7C3AED" stop-opacity="0.8" />
+                                </linearGradient>
+                                <filter id="svg-glow" x="-20%" y="-20%" width="140%" height="140%">
+                                    <feGaussianBlur stdDeviation="6" result="blur" />
+                                    <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                                </filter>
+                            </defs>
+                            <circle cx="100" cy="100" r="70" fill="none" stroke="url(#svg-grad)" stroke-width="1.5" stroke-dasharray="8 8" opacity="0.3" class="spin-slow" />
+                            <circle cx="100" cy="100" r="50" fill="none" stroke="url(#svg-grad)" stroke-width="1" stroke-dasharray="4 4" opacity="0.5" class="spin-reverse" />
+                            <g class="float-anim">
+                                <rect x="60" y="70" width="80" height="60" rx="12" fill="#ffffff" stroke="url(#svg-grad)" stroke-width="1.5" filter="url(#svg-glow)" />
+                                <line x1="75" y1="88" x2="125" y2="88" stroke="#4F8CFF" stroke-width="2" stroke-linecap="round" />
+                                <line x1="75" y1="98" x2="110" y2="98" stroke="#E2E8F0" stroke-width="2" stroke-linecap="round" />
+                                <line x1="75" y1="108" x2="120" y2="108" stroke="#E2E8F0" stroke-width="2" stroke-linecap="round" />
+                                <path d="m145 65-1.9 5.8a2 2 0 0 1-1.3 1.3L136 74l5.8 1.9a2 2 0 0 1 1.3 1.3L145 83l1.9-5.8a2 2 0 0 1 1.3-1.3l5.8-1.9-5.8-1.9a2 2 0 0 1-1.3-1.3Z" fill="#7C3AED" class="pulse-spark" />
+                                <path d="m55 120-1.9 5.8a2 2 0 0 1-1.3 1.3L46 129l5.8 1.9a2 2 0 0 1 1.3 1.3L55 138l1.9-5.8a2 2 0 0 1 1.3-1.3l5.8-1.9-5.8-1.9a2 2 0 0 1-1.3-1.3Z" fill="#4F8CFF" class="pulse-spark-2" />
+                            </g>
+                        </svg>
                         <h3>Sélectionnez un e-mail</h3>
                         <p>Choisissez un message dans la liste à gauche pour afficher ses détails et la réponse automatique de l'agent.</p>
                     </div>
@@ -1045,10 +1412,29 @@
                             <!-- Generated AI Reply Card -->
                             <div class="thread-card ai-reply">
                                 <div class="card-tag ai-tag">
-                                    <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-right: 4px;"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+                                    <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-right: 5px;"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275Z"/></svg>
                                     Réponse IA Générée
                                 </div>
                                 <div id="replyContent" class="email-body reply-body">La réponse automatique apparaîtra ici...</div>
+                                
+                                <!-- Suggested actions to feel extremely premium -->
+                                <div class="suggested-actions-wrapper">
+                                    <span class="suggested-title">Actions suggérées par l'IA</span>
+                                    <div class="suggested-actions">
+                                        <span class="action-pill">
+                                            <svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 20h9M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+                                            Modifier le brouillon
+                                        </span>
+                                        <span class="action-pill">
+                                            <svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+                                            Régénérer
+                                        </span>
+                                        <span class="action-pill">
+                                            <svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                                            Planifier
+                                        </span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -1058,8 +1444,12 @@
                 <div class="panel log-panel" id="console-panel">
                     <div class="panel-header-with-actions">
                         <h2>Console de l'Agent</h2>
+                        <div class="console-status-badge">
+                            <span class="console-status-dot"></span>
+                            <span class="console-status-text">Live</span>
+                        </div>
                         <button class="clear-log-btn" onclick="document.getElementById('log').innerHTML='';" title="Effacer les journaux" type="button">
-                            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                            <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
                         </button>
                     </div>
                     <div id="log" class="log" aria-live="polite"></div>
@@ -1166,19 +1556,37 @@
         emails.forEach((email) => {
             const item = document.createElement('div');
             const isDemo = email.id.startsWith('demo-');
-            item.className = `inbox-item ${isDemo ? 'demo-badge' : ''}`;
+            item.className = `inbox-item`;
             item.dataset.id = email.id;
 
             // Format time nicely
             const timeStr = formatTime(email.internalDateMillis);
+            
+            const name = email.from.split('<')[0].trim() || email.from;
+            const initial = (name.charAt(0) || 'U').toUpperCase();
+            
+            const isProcessed = email.processed;
+            const priorityTag = isDemo ? '<span class="badge-priority">Prioritaire</span>' : '';
+            const aiTag = isProcessed 
+                ? `<span class="badge-ai"><svg viewBox="0 0 24 24" width="10" height="10" fill="none" stroke="currentColor" stroke-width="3" style="margin-right:3px"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275Z"/></svg>Traité</span>` 
+                : '<span class="badge-pending">En attente</span>';
 
             item.innerHTML = `
-                <div class="inbox-item-header">
-                    <span class="inbox-item-sender" title="${escapeHtml(email.from)}">${escapeHtml(email.from.split('<')[0].trim())}</span>
-                    <span class="inbox-item-time">${timeStr}</span>
+                <div class="inbox-avatar-col">
+                    <div class="inbox-item-avatar">${initial}</div>
                 </div>
-                <div class="inbox-item-subject" title="${escapeHtml(email.subject)}">${escapeHtml(email.subject)}</div>
-                <div class="inbox-item-snippet">${escapeHtml(email.body || '')}</div>
+                <div class="inbox-content-col">
+                    <div class="inbox-item-header">
+                        <span class="inbox-item-sender" title="${escapeHtml(email.from)}">${escapeHtml(name)}</span>
+                        <span class="inbox-item-time">${timeStr}</span>
+                    </div>
+                    <div class="inbox-item-subject" title="${escapeHtml(email.subject)}">${escapeHtml(email.subject || '(Sans objet)')}</div>
+                    <div class="inbox-item-snippet">${escapeHtml(email.body || '')}</div>
+                    <div class="inbox-item-badges">
+                        ${priorityTag}
+                        ${aiTag}
+                    </div>
+                </div>
             `;
 
             item.addEventListener('click', () => {
