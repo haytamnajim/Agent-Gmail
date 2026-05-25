@@ -1700,6 +1700,194 @@
         .reject-btn:hover {
             background: var(--danger-light);
         }
+
+        /* Toast Notifications */
+        #toast-container {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            z-index: 9999;
+        }
+
+        .toast {
+            background: var(--surface);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            padding: 16px 20px;
+            border-radius: var(--radius-md);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transform: translateX(120%);
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            min-width: 300px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .toast.show {
+            transform: translateX(0);
+            opacity: 1;
+        }
+
+        .toast-icon {
+            font-size: 18px;
+        }
+
+        .toast-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .toast-title {
+            font-weight: 700;
+            font-size: 13.5px;
+            color: var(--text-main);
+        }
+
+        .toast-message {
+            font-size: 12px;
+            color: var(--text-sub);
+            margin-top: 2px;
+        }
+
+        .toast-progress {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 3px;
+            background: var(--primary-gradient);
+            width: 100%;
+            transform-origin: left;
+            animation: toast-progress linear forwards;
+        }
+
+        @keyframes toast-progress {
+            to { transform: scaleX(0); }
+        }
+
+        /* Command Palette Modal (Cmd+K) */
+        .cmd-palette-backdrop {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.4);
+            backdrop-filter: blur(8px);
+            z-index: 10000;
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            padding-top: 12vh;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s ease;
+        }
+
+        body.dark .cmd-palette-backdrop {
+            background: rgba(0, 0, 0, 0.6);
+        }
+
+        .cmd-palette-backdrop.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .cmd-palette {
+            width: 100%;
+            max-width: 600px;
+            background: var(--surface-solid);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            overflow: hidden;
+            transform: scale(0.95) translateY(-20px);
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .cmd-palette-backdrop.active .cmd-palette {
+            transform: scale(1) translateY(0);
+        }
+
+        .cmd-search {
+            display: flex;
+            align-items: center;
+            padding: 16px 24px;
+            border-bottom: 1px solid var(--border);
+            gap: 16px;
+        }
+
+        .cmd-input {
+            flex: 1;
+            border: none;
+            background: transparent;
+            font-size: 18px;
+            color: var(--text-main);
+            outline: none;
+            font-family: inherit;
+        }
+
+        .cmd-input::placeholder {
+            color: var(--text-sub);
+            opacity: 0.5;
+        }
+
+        .cmd-results {
+            padding: 12px;
+            max-height: 350px;
+            overflow-y: auto;
+        }
+
+        .cmd-group-title {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-sub);
+            padding: 8px 12px;
+            margin-top: 8px;
+        }
+
+        .cmd-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: var(--transition);
+            color: var(--text-main);
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        .cmd-item:hover, .cmd-item.active {
+            background: var(--primary-light);
+            color: var(--primary);
+        }
+
+        .cmd-item-shortcut {
+            margin-left: auto;
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-sub);
+            background: rgba(15, 23, 42, 0.05);
+            padding: 4px 8px;
+            border-radius: 4px;
+            border: 1px solid var(--border);
+        }
+
+        body.dark .cmd-item-shortcut {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .view-fade-in {
+            animation: fade-scale-in 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
     </style>
 </head>
 <body>
@@ -2042,6 +2230,55 @@ L'équipe Support</textarea>
     </div>
 </div>
 
+<!-- Toast Container -->
+<div id="toast-container"></div>
+
+<!-- Command Palette Modal -->
+<div id="cmd-palette-backdrop" class="cmd-palette-backdrop">
+    <div class="cmd-palette">
+        <div class="cmd-search">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--text-sub);"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            <input type="text" class="cmd-input" id="cmd-input" placeholder="Que voulez-vous faire ?">
+            <div class="cmd-item-shortcut" style="cursor: pointer;" onclick="closeCmdPalette()">Esc</div>
+        </div>
+        <div class="cmd-results">
+            <div class="cmd-group-title">Navigation</div>
+            <div class="cmd-item" onclick="switchView('inbox'); closeCmdPalette();">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path></svg>
+                Aller à la Boîte de réception
+                <span class="cmd-item-shortcut">G I</span>
+            </div>
+            <div class="cmd-item" onclick="switchView('validation'); closeCmdPalette();">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                Voir les e-mails à valider
+                <span class="cmd-item-shortcut">G V</span>
+            </div>
+            <div class="cmd-item" onclick="switchView('stats'); closeCmdPalette();">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+                Ouvrir les Statistiques
+                <span class="cmd-item-shortcut">G S</span>
+            </div>
+            <div class="cmd-group-title">Actions Agent</div>
+            <div class="cmd-item" onclick="command('/agent/start'); closeCmdPalette();">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" style="color: var(--success);"><path d="M8 5v14l11-7z"/></svg>
+                Démarrer l'Agent IA
+                <span class="cmd-item-shortcut">Ctrl+Enter</span>
+            </div>
+            <div class="cmd-item" onclick="document.getElementById('themeToggle').click(); closeCmdPalette();">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+                Basculer le thème (Clair/Sombre)
+                <span class="cmd-item-shortcut">Ctrl+T</span>
+            </div>
+            <div class="cmd-group-title">Aide</div>
+            <div class="cmd-item" onclick="showToast('Raccourci clavier', 'Appuyez sur Ctrl+K ou Cmd+K depuis n\'importe où pour ouvrir cette palette de commandes.', 'info'); closeCmdPalette();">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                Afficher l'astuce Cmd+K
+                <span class="cmd-item-shortcut">?</span>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
     const startButton = document.getElementById('startButton');
     const stopButton = document.getElementById('stopButton');
@@ -2076,9 +2313,19 @@ L'équipe Support</textarea>
         if (viewName === 'validation') navValidation.classList.add('active');
         if (viewName === 'stats') navStats.classList.add('active');
         
+        [viewInbox, viewValidation, viewStats].forEach(v => {
+            v.classList.remove('view-fade-in');
+            // Trigger reflow to restart animation
+            void v.offsetWidth;
+        });
+
         viewInbox.style.display = viewName === 'inbox' ? 'grid' : 'none';
         viewValidation.style.display = viewName === 'validation' ? 'grid' : 'none';
         viewStats.style.display = viewName === 'stats' ? 'flex' : 'none';
+
+        if (viewName === 'inbox') viewInbox.classList.add('view-fade-in');
+        if (viewName === 'validation') viewValidation.classList.add('view-fade-in');
+        if (viewName === 'stats') viewStats.classList.add('view-fade-in');
     }
 
     navInbox.addEventListener('click', (e) => { e.preventDefault(); switchView('inbox'); });
@@ -2337,11 +2584,83 @@ L'équipe Support</textarea>
         document.body.classList.toggle('dark');
         const isDark = document.body.classList.contains('dark');
         localStorage.setItem('theme', isDark ? 'dark' : 'light');
+        showToast('Thème mis à jour', isDark ? 'Mode sombre activé.' : 'Mode clair activé.', 'success');
     });
 
     if (localStorage.getItem('theme') === 'dark') {
         document.body.classList.add('dark');
     }
+
+    // Toast Notification System
+    function showToast(title, message, type = 'success') {
+        const container = document.getElementById('toast-container');
+        const toast = document.createElement('div');
+        toast.className = 'toast';
+        
+        const icon = type === 'success' ? '✅' : (type === 'error' ? '🚨' : 'ℹ️');
+        
+        toast.innerHTML = `
+            <div class="toast-icon">${icon}</div>
+            <div class="toast-content">
+                <div class="toast-title">${title}</div>
+                <div class="toast-message">${message}</div>
+            </div>
+            <div class="toast-progress" style="animation-duration: 3s; ${type === 'error' ? 'background: var(--danger);' : ''}"></div>
+        `;
+        
+        container.appendChild(toast);
+        
+        setTimeout(() => toast.classList.add('show'), 10);
+        
+        setTimeout(() => {
+            toast.classList.remove('show');
+            setTimeout(() => toast.remove(), 400);
+        }, 3000);
+    }
+
+    // Command Palette Logic
+    const cmdPaletteBackdrop = document.getElementById('cmd-palette-backdrop');
+    const cmdInput = document.getElementById('cmd-input');
+    
+    function closeCmdPalette() {
+        cmdPaletteBackdrop.classList.remove('active');
+        cmdInput.value = '';
+    }
+    
+    document.addEventListener('keydown', (e) => {
+        if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+            e.preventDefault();
+            cmdPaletteBackdrop.classList.add('active');
+            setTimeout(() => cmdInput.focus(), 50);
+        }
+        if (e.key === 'Escape' && cmdPaletteBackdrop.classList.contains('active')) {
+            closeCmdPalette();
+        }
+    });
+    
+    cmdPaletteBackdrop.addEventListener('click', (e) => {
+        if (e.target === cmdPaletteBackdrop) closeCmdPalette();
+    });
+
+    // Initial Hint
+    setTimeout(() => {
+        showToast('Astuce Agent Gmail', 'Appuyez sur Cmd+K (ou Ctrl+K) pour ouvrir la palette de commandes.', 'info');
+    }, 1500);
+
+    // Bind validation buttons
+    document.querySelectorAll('.approve-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            showToast('E-mail approuvé', 'La réponse de l\'IA a été validée et envoyée avec succès.', 'success');
+            setTimeout(() => switchView('inbox'), 800);
+        });
+    });
+
+    document.querySelectorAll('.reject-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            showToast('E-mail rejeté', 'Le brouillon a été supprimé. Une action manuelle est requise.', 'error');
+            setTimeout(() => switchView('inbox'), 800);
+        });
+    });
 </script>
 </body>
 </html>
